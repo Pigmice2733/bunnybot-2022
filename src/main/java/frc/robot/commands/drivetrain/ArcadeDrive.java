@@ -7,19 +7,18 @@ import frc.robot.subsystems.Drivetrain;
 
 public class ArcadeDrive extends CommandBase {
     private Drivetrain drivetrain;
-    private double forward;
-    private double rotate;
+    private DoubleSupplier forward, rotate;
 
     public ArcadeDrive(Drivetrain drivetrain, DoubleSupplier forward, DoubleSupplier rotate) {
         this.drivetrain = drivetrain;
-        this.forward = forward.getAsDouble();
-        this.rotate = rotate.getAsDouble();
+        this.forward = forward;
+        this.rotate = rotate;
 
         addRequirements(drivetrain);
     }
 
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(forward, rotate);
+        drivetrain.arcadeDrive(forward.getAsDouble(), rotate.getAsDouble());
     }
 }

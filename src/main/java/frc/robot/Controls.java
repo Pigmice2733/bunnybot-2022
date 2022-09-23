@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.DrivetrainConfig;
+import frc.robot.Constants.RakeConfig;
 
 public class Controls {
     XboxController driver;
@@ -30,5 +31,10 @@ public class Controls {
         joystickValue = MathUtil.applyDeadband(joystickValue, threshold); // Deals with stick drag
 
         return joystickValue * DrivetrainConfig.turnSpeed;
+    }
+
+    public double getRakeRotationSpeed() {
+        double joystickValue = driver.getLeftY();
+        return joystickValue * RakeConfig.motorSpeed;
     }
 }

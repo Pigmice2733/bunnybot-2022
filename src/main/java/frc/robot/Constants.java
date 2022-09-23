@@ -38,8 +38,13 @@ public final class Constants {
         public static final double slowMultiplier = 0.25;
 
         public static final int frontLeftMotorPort = 0;
-        public static final int frontRightMotorPort = 1;
+        public static final int frontRightMotorPort = 4;
         public static final int backLeftMotorPort = 2;
         public static final int backRightMotorPort = 3;
+    }
+
+    public final static class RakeConfig {
+        public static final int motorID = 2;
+        public static final double motorSpeed = 1;
     }
 }
