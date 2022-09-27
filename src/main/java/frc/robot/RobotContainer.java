@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.RotateRake;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,7 +33,8 @@ public class RobotContainer {
   //private final Drivetrain drivetrain;
 
   private final Controls controls;
-  private final Rake rake;
+  //private final Rake rake;
+  private final Conveyor conveyor;
 
   private XboxController driver;
   private XboxController operator;
@@ -42,7 +44,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
     //drivetrain = new Drivetrain();
-    rake = new Rake();
+    //rake = new Rake();
+    conveyor = new Conveyor();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -53,7 +56,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed));*/
 
-      rake.setDefaultCommand(new RotateRake(rake, controls::getRakeRotationSpeed));
+      //rake.setDefaultCommand(new RotateRake(rake, controls::getRakeRotationSpeed));
 
     configureButtonBindings(driver, operator);
   }
@@ -70,6 +73,10 @@ public class RobotContainer {
     // Example joystick button
     /*new JoystickButton(driver, Button.kA.value)
         .whenPressed(drivetrain::enable);*/
+
+      new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
+      new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
+
   }
 
   /**
