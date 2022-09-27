@@ -6,3 +6,6 @@ This file will be used to type out controls after meeting with the drive team.
 DRIVER:
 left joystick: Y - forward speed / rake rotation
 right joystick: X - turn speed
+X button: (hold) stop scoop
+Y button: (hold) extend scoop
+B button: (hold) retract scoop

@@ -47,4 +47,10 @@ public final class Constants {
         public static final int motorID = 2;
         public static final double motorSpeed = 1;
     }
+
+    public final static class ScoopConfig {
+        public static final int rotateID = 1;
+        public static final int extendID = 2;
+        public static final double motorSpeed = 1;
+    }
 }

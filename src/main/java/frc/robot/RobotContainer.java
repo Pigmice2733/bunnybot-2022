@@ -4,18 +4,18 @@
 
 package frc.robot;
 
-import java.io.Console;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
-import frc.robot.commands.drivetrain.ArcadeDrive;
-import frc.robot.commands.drivetrain.RotateRake;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Rake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import frc.robot.Constants.ScoopConfig;
+import frc.robot.commands.RotateRake;
+import frc.robot.commands.RunScoop;
+import frc.robot.subsystems.Rake;
+import frc.robot.subsystems.ScoopIntake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,10 +29,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  //private final Drivetrain drivetrain;
+  // private final Drivetrain drivetrain;
 
   private final Controls controls;
   private final Rake rake;
+  private final ScoopIntake scoop;
 
   private XboxController driver;
   private XboxController operator;
@@ -41,19 +42,23 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //drivetrain = new Drivetrain();
+    // drivetrain = new Drivetrain();
     rake = new Rake();
+    scoop = new ScoopIntake();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
     controls = new Controls(driver, operator);
 
-    /*drivetrain.setDefaultCommand(new ArcadeDrive(
-        drivetrain,
-        controls::getDriveSpeed,
-        controls::getTurnSpeed));*/
+    /*
+     * drivetrain.setDefaultCommand(new ArcadeDrive(
+     * drivetrain,
+     * controls::getDriveSpeed,
+     * controls::getTurnSpeed));
+     */
 
-      rake.setDefaultCommand(new RotateRake(rake, controls::getRakeRotationSpeed));
+    rake.setDefaultCommand(new RotateRake(rake, controls::getRakeRotationSpeed));
+    scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
   }
@@ -68,8 +73,21 @@ public class RobotContainer {
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
     // Example joystick button
-    /*new JoystickButton(driver, Button.kA.value)
-        .whenPressed(drivetrain::enable);*/
+    /*
+     * new JoystickButton(driver, Button.kA.value)
+     * .whenPressed(drivetrain::enable);
+     */
+
+    new JoystickButton(driver, Button.kX.value)
+        .whenPressed(new RunScoop(scoop, () -> 0));
+
+    new JoystickButton(driver, Button.kY.value)
+        .whenPressed(scoop::extend)
+        .whenReleased(scoop::stopExtend);
+
+    new JoystickButton(driver, Button.kB.value)
+        .whenPressed(scoop::retract)
+        .whenReleased(scoop::stopExtend);
   }
 
   /**
