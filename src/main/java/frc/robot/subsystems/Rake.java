@@ -23,7 +23,7 @@ public class Rake extends SubsystemBase {
 
   }
 
-  public void SetMotorSpeed(double speed) {
+  public void setMotorSpeed(double speed) {
     motor.set(ControlMode.PercentOutput, speed);
   }
 }
