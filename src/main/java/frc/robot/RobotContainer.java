@@ -76,6 +76,7 @@ public class RobotContainer {
 
       new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
       new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
+      new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection);
 
   }
 

@@ -13,8 +13,8 @@ import frc.robot.Constants.ConveyorConfig;
 public class Conveyor extends SubsystemBase {
   private final TalonSRX bottomMotor, topMotor;
 
-
   boolean enabled;
+  boolean isBackwards;
 
   public void Enable() {
     SetMotorSpeeds(ConveyorConfig.speed);
@@ -26,6 +26,14 @@ public class Conveyor extends SubsystemBase {
     enabled = false;
   }
 
+  public void ToggleDirection() {
+    isBackwards = !isBackwards;
+
+    if (enabled) {
+      SetMotorSpeeds(ConveyorConfig.speed);
+    }
+  }
+
   /** Creates a new Conveyer. */
   public Conveyor() {
     bottomMotor = new TalonSRX(ConveyorConfig.botMotorID);
@@ -35,7 +43,11 @@ public class Conveyor extends SubsystemBase {
     topMotor.setInverted(ConveyorConfig.topMotorInverted);
   }
 
-  public void SetMotorSpeeds(Double speed){
+  public void SetMotorSpeeds(Double speed) {
+    if (isBackwards) {
+      speed = -speed;
+    }
+
     bottomMotor.set(ControlMode.PercentOutput, speed);
     topMotor.set(ControlMode.PercentOutput, speed);
   }
