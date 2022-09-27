@@ -32,8 +32,8 @@ public final class Constants {
         public static final double axisThreshold = 0.1;
         public static final double wheelBase = 0.5; // circumference / gear ratio
 
-        public static final double driveSpeed = 0;
-        public static final double turnSpeed = 0;
+        public static final double driveSpeed = 1;
+        public static final double turnSpeed = 1;
 
         public static final double slowMultiplier = 0.25;
 
