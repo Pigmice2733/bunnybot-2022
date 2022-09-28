@@ -7,5 +7,8 @@ DRIVER:
 left joystick: Y - forward speed / rake rotation
 right joystick: X - turn speed
 X button: (hold) stop scoop
-Y button: (hold) extend scoop
-B button: (hold) retract scoop
+Y button: toggle direction of conveyor
+A button: enable conveyor
+B button: disable conveyor
+right bumper: (hold) extend scoop
+left bumper: (hold) retract scoop

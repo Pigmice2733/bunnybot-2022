@@ -16,6 +16,9 @@ import frc.robot.commands.RotateRake;
 import frc.robot.commands.RunScoop;
 import frc.robot.subsystems.Rake;
 import frc.robot.subsystems.ScoopIntake;
+import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -32,8 +35,10 @@ public class RobotContainer {
   // private final Drivetrain drivetrain;
 
   private final Controls controls;
+  private final Drivetrain drivetrain;
   private final Rake rake;
   private final ScoopIntake scoop;
+  private final Conveyor conveyor;
 
   private XboxController driver;
   private XboxController operator;
@@ -42,9 +47,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // drivetrain = new Drivetrain();
+    drivetrain = new Drivetrain();
     rake = new Rake();
     scoop = new ScoopIntake();
+    conveyor = new Conveyor();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -78,16 +84,24 @@ public class RobotContainer {
      * .whenPressed(drivetrain::enable);
      */
 
-    new JoystickButton(driver, Button.kX.value)
-        .whenPressed(new RunScoop(scoop, () -> 0));
+    new JoystickButton(driver, Button.kX.value).whenPressed(new RunScoop(scoop, () -> 0));
 
-    new JoystickButton(driver, Button.kY.value)
+    new JoystickButton(driver, Button.kRightBumper.value)
         .whenPressed(scoop::extend)
         .whenReleased(scoop::stopExtend);
 
-    new JoystickButton(driver, Button.kB.value)
+    new JoystickButton(driver, Button.kLeftBumper.value)
         .whenPressed(scoop::retract)
         .whenReleased(scoop::stopExtend);
+    /*
+     * new JoystickButton(driver, Button.kA.value)
+     * .whenPressed(drivetrain::enable);
+     */
+
+    new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
+    new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
+    new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection);
+
   }
 
   /**
