@@ -4,19 +4,23 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.Dashboard;
+import frc.robot.Constants.DrivetrainConfig;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Dashboard;
-import frc.robot.Constants.DrivetrainConfig;
 
 public class Drivetrain extends SubsystemBase {
   private boolean enabled;
@@ -36,22 +40,20 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
 
   private double leftDemand, rightDemand;
-  private double leftPosition, rightPosition, heading; // heading is in degrees now
+  private double leftPosition, rightPosition, heading;
 
-  private boolean boost = false;
-  private boolean slow = false;
+  private double speedFactor = 1;
+  public boolean slowEnabled = false;
 
-  // private Odometry odometry;
+  private DifferentialDriveOdometry odometry;
+  private final NetworkTableEntry xDisplay, yDisplay, headingDisplay, leftEncoderDisplay, rightEncoderDisplay;
 
   private AHRS navx;
   private double navxTestAngle;
   private boolean navxTestPassed = false;
   private final NetworkTableEntry navxReport;
 
-  private final NetworkTableEntry xDisplay, yDisplay, headingDisplay,
-      leftEncoderDisplay, rightEncoderDisplay;
-
-  // private Point initialPosition = Point.origin();
+  
 
   public Drivetrain() {
     rightDrive = new CANSparkMax(DrivetrainConfig.frontLeftMotorPort,
@@ -72,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.follow(leftDrive);
     rightFollower.follow(rightDrive);
 
-    // navx = new AHRS(DrivetrainConfig.navxPort);
+    navx = new AHRS();
 
     ShuffleboardLayout testReportLayout = Shuffleboard.getTab(Dashboard.systemsTestTabName)
         .getLayout("Drivetrain", BuiltInLayouts.kList)
@@ -81,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
 
     navxReport = testReportLayout.add("NavX", false).getEntry();
 
-    // leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
-    // rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
+    leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
+    rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
 
     setCoastMode(false);
 
@@ -96,17 +98,10 @@ public class Drivetrain extends SubsystemBase {
     leftEncoderDisplay = odometryLayout.add("Left Encoder", 0).getEntry();
     rightEncoderDisplay = odometryLayout.add("Right Encoder", 0).getEntry();
 
-    // odometry = new Odometry(new Pose(0.0, 0.0, 0.0));
-
-    // Used to be in initialize()
-    leftPosition = 0.0;
-    rightPosition = 0.0;
-    heading = 0.0;
+    odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
     leftDrive.getEncoder().setPosition(0.0);
     rightDrive.getEncoder().setPosition(0.0);
-
-    // odometry.set(new Pose(0.0, 0.0, heading), leftPosition, rightPosition);
 
     leftDemand = 0.0;
     rightDemand = 0.0;
@@ -118,81 +113,49 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // this.getDistanceFromStart();
-    // from updateInputs
     leftPosition = leftDrive.getEncoder().getPosition();
     rightPosition = rightDrive.getEncoder().getPosition();
 
     updateHeading();
-
-    // odometry.update(leftPosition, rightPosition, heading);
-
-    // from updateDashboard()
-    // Pose currentPose = odometry.getPose();
-
-    // xDisplay.setNumber(currentPose.getX());
-    // yDisplay.setNumber(currentPose.getY());
-    // headingDisplay.setNumber(currentPose.getHeading());
+    updateOdometry();
+    
     leftEncoderDisplay.setNumber(leftPosition);
     rightEncoderDisplay.setNumber(rightPosition);
   }
 
-  public void updateDashboard() {
+  public void updateOdometry() {
+    odometry.update(new Rotation2d(heading), leftPosition, rightPosition);
+
+    // Update Shuffleboard Outputs
+    Pose2d currentPose = odometry.getPoseMeters();
+    xDisplay.setNumber(currentPose.getX());
+    yDisplay.setNumber(currentPose.getY());
+    headingDisplay.setNumber(currentPose.getRotation().getDegrees());
   }
 
   public void updateHeading() {
     double headingDegrees = navx.getAngle();
-
-    SmartDashboard.putNumber("Heading (Degrees)", headingDegrees);
-
     heading = headingDegrees;
   }
 
-  public void updateInputs() {
-  }
-
+  // Current rotation of the robot in degrees
   public double getHeading() {
     return heading;
   }
 
-  /*
-   * public Pose getPose() {
-   * return odometry.getPose();
-   * }
-   */
-
-  public void boost() {
-    this.boost = true;
+  // Current position of the robot in meters
+  public Pose2d getPose() {
+  return odometry.getPoseMeters();
   }
 
-  public void stopBoost() {
-    this.boost = false;
+  public void enableSlow() {
+    slowEnabled = true;
+    speedFactor = DrivetrainConfig.slowMultiplier;
   }
 
-  public void toggleBoost() {
-    this.boost = !this.boost;
-    this.slow = false;
-  }
-
-  public boolean isBoosting() {
-    return this.boost;
-  }
-
-  public void slow() {
-    this.slow = true;
-  }
-
-  public void stopSlow() {
-    this.slow = false;
-  }
-
-  public void toggleSlow() {
-    this.slow = !this.slow;
-    this.boost = false;
-  }
-
-  public boolean isSlow() {
-    return this.slow;
+  public void disableSlow() {
+    slowEnabled = false;
+    speedFactor = 1;
   }
 
   public boolean isCalibrating() {
@@ -230,22 +193,17 @@ public class Drivetrain extends SubsystemBase {
     updateOutputs();
   }
 
-  public void swerveDrive(double forward, double strafe, double rotation_x) {
-  }
-
   public void stop() {
     leftDemand = 0.0;
     rightDemand = 0.0;
+
+    updateOutputs();
   }
 
   public void updateOutputs() {
-    leftDemand *= 0.75;
-    rightDemand *= 0.75;
 
-    if (slow) {
-      leftDemand *= DrivetrainConfig.slowMultiplier;
-      rightDemand *= DrivetrainConfig.slowMultiplier;
-    }
+    leftDemand *= speedFactor;
+    rightDemand *= speedFactor;
 
     leftDrive.set(leftDemand);
     rightDrive.set(rightDemand);
@@ -254,16 +212,14 @@ public class Drivetrain extends SubsystemBase {
     rightDemand = 0.0;
   }
 
-  public void test(double time) {
+  public void navxTest(double time) {
     if (time < 0.1) {
       navxTestAngle = navx.getAngle();
       navxTestPassed = false;
     }
-
     if (!navxTestPassed) {
       navxTestPassed = navx.getAngle() != navxTestAngle;
     }
-
     navxReport.setBoolean(navxTestPassed);
   }
 
@@ -276,35 +232,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose() {
-    // this.odometry.set(new Pose(0, 0, getPose().getHeading()), 0.0, 0.0);
-    // initialPosition = new Point(this.getPose());
+    this.odometry.resetPosition(new Pose2d(), new Rotation2d());
   }
 
-  /*
-   * public double getDistanceFromStart() {
-   * Point currentPosition = new Point(this.getPose());
-   * SmartDashboard.putNumber("Left Position",
-   * leftDrive.getEncoder().getPosition());
-   * SmartDashboard.putNumber("Right Rotation",
-   * rightDrive.getEncoder().getPosition());
-   * SmartDashboard.putString("Current Position",
-   * "(" + currentPosition.getX() + ", " + currentPosition.getY() + ")");
-   * SmartDashboard.putString("INITIAL POSITION",
-   * "(" + initialPosition.getX() + ", " + currentPosition.getY() + ")");
-   * SmartDashboard.putNumber("Left Distance",
-   * encoderTicksToPosition(leftDrive.getEncoder().getPosition()));
-   * SmartDashboard.putNumber("Right Distance",
-   * encoderTicksToPosition(rightDrive.getEncoder().getPosition()));
-   * double leftDistance =
-   * encoderTicksToPosition(leftDrive.getEncoder().getPosition());
-   * double rightDistance =
-   * encoderTicksToPosition(rightDrive.getEncoder().getPosition());
-   * return (leftDistance + rightDistance) / 2.0;
-   * }
-   */
+  // Distance in meters from where the robot was enabled, or resetPose() was called
+  public double getDistanceFromStart() {
+    double leftDistance = leftDrive.getEncoder().getPosition();
+    double rightDistance = rightDrive.getEncoder().getPosition();
 
-  private double encoderTicksToPosition(double ticks) {
-    return ticks * DrivetrainConfig.wheelBase;
+    return (leftDistance + rightDistance) / 2.0;
   }
 
   public void zeroHeading() {

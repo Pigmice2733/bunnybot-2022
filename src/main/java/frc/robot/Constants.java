@@ -29,6 +29,11 @@ public final class Constants {
     }
 
     public final static class DrivetrainConfig {
+        public static final int frontLeftMotorPort = 0;
+        public static final int frontRightMotorPort = 4;
+        public static final int backLeftMotorPort = 2;
+        public static final int backRightMotorPort = 3;
+
         public static final double axisThreshold = 0.1;
         public static final double wheelBase = 0.5; // circumference / gear ratio
 
@@ -37,10 +42,9 @@ public final class Constants {
 
         public static final double slowMultiplier = 0.25;
 
-        public static final int frontLeftMotorPort = 0;
-        public static final int frontRightMotorPort = 4;
-        public static final int backLeftMotorPort = 2;
-        public static final int backRightMotorPort = 3;
+        public static final double gearRatio = 1;
+        public static final double wheelDiameterMeters = 1;
+        public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) / gearRatio;
     }
 
     public final static class RakeConfig {
