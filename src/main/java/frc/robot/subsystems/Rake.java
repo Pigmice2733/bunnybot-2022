@@ -11,19 +11,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RakeConfig;
 
 public class Rake extends SubsystemBase {
-  private final TalonSRX motor;
+  private final TalonSRX leftMotor;
+  private final TalonSRX rightMotor;
+  private double angle;
 
   /** Creates a new Rake. */
   public Rake() {
-    motor = new TalonSRX(RakeConfig.motorID);
+    leftMotor = new TalonSRX(RakeConfig.leftMotorID);
+    rightMotor = new TalonSRX(RakeConfig.rightMotorID);
+
+    angle = RakeConfig.startAngle;
   }
 
   @Override
   public void periodic() {
-
+    this.angle = (leftMotor.getSelectedSensorPosition() + rightMotor.getSelectedSensorPosition())
+        * 45 / 1024; // average angle for two motors (should be the same anyway)
   }
 
   public void setMotorSpeed(double speed) {
-    motor.set(ControlMode.PercentOutput, speed);
+    leftMotor.set(ControlMode.PercentOutput, speed);
+    rightMotor.set(ControlMode.PercentOutput, speed);
+  }
+
+  public double getAngle() {
+    return this.angle;
   }
 }

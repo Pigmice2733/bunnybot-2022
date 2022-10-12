@@ -19,7 +19,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -52,8 +51,6 @@ public class Drivetrain extends SubsystemBase {
   private double navxTestAngle;
   private boolean navxTestPassed = false;
   private final NetworkTableEntry navxReport;
-
-  
 
   public Drivetrain() {
     rightDrive = new CANSparkMax(DrivetrainConfig.frontLeftMotorPort,
@@ -118,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
 
     updateHeading();
     updateOdometry();
-    
+
     leftEncoderDisplay.setNumber(leftPosition);
     rightEncoderDisplay.setNumber(rightPosition);
   }
@@ -145,7 +142,7 @@ public class Drivetrain extends SubsystemBase {
 
   // Current position of the robot in meters
   public Pose2d getPose() {
-  return odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   public void enableSlow() {
@@ -233,6 +230,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void resetPose() {
     this.odometry.resetPosition(new Pose2d(), new Rotation2d());
+
+    leftDrive.getEncoder().setPosition(0.0);
+    rightDrive.getEncoder().setPosition(0.0);
   }
 
   // Distance in meters from where the robot was enabled, or resetPose() was called

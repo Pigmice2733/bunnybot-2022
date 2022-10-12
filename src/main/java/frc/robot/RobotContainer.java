@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-//testtttttttttttttt
 
 package frc.robot;
 
@@ -11,9 +10,10 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ScoopConfig;
-import frc.robot.commands.RotateRake;
+import frc.robot.commands.RotateRakeAngle;
+import frc.robot.commands.RotateRakeSpeed;
 import frc.robot.commands.RunScoop;
 import frc.robot.subsystems.Rake;
 import frc.robot.subsystems.ScoopIntake;
@@ -23,12 +23,10 @@ import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
@@ -38,8 +36,8 @@ public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
   private final Rake rake;
-  private final ScoopIntake scoop;
-  private final Conveyor conveyor;
+  // private final ScoopIntake scoop;
+  // private final Conveyor conveyor;
 
   private XboxController driver;
   private XboxController operator;
@@ -50,8 +48,8 @@ public class RobotContainer {
   public RobotContainer() {
     drivetrain = new Drivetrain();
     rake = new Rake();
-    scoop = new ScoopIntake();
-    conveyor = new Conveyor();
+    // scoop = new ScoopIntake();
+    // conveyor = new Conveyor();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -64,45 +62,51 @@ public class RobotContainer {
      * controls::getTurnSpeed));
      */
 
-    rake.setDefaultCommand(new RotateRake(rake, controls::getRakeRotationSpeed));
-    scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
+    rake.setDefaultCommand(new RotateRakeSpeed(controls::getRakeRotationSpeed, rake));
+    // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
   }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    // Example joystick button
     /*
      * new JoystickButton(driver, Button.kA.value)
      * .whenPressed(drivetrain::enable);
      */
 
-    new JoystickButton(driver, Button.kX.value).whenPressed(new RunScoop(scoop, () -> 0));
-
+    /* new JoystickButton(driver, Button.kX.value)
+        .whenPressed(new RunScoop(scoop, () -> 0));
+    
     new JoystickButton(driver, Button.kRightBumper.value)
         .whenPressed(scoop::extend)
         .whenReleased(scoop::stopExtend);
-
+    
     new JoystickButton(driver, Button.kLeftBumper.value)
         .whenPressed(scoop::retract)
-        .whenReleased(scoop::stopExtend);
+        .whenReleased(scoop::stopExtend); */
     /*
      * new JoystickButton(driver, Button.kA.value)
      * .whenPressed(drivetrain::enable);
      */
 
-    new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
+    /* new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
     new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
-    new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection);
+    new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection); */
 
+    new JoystickButton(driver, Button.kA.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+    new JoystickButton(driver, Button.kB.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
+    new JoystickButton(driver, Button.kX.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+    new JoystickButton(driver, Button.kY.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
   }
 
   /**
