@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.Dashboard;
 import frc.robot.Constants.DrivetrainConfig;
+import frc.robot.Constants.ShuffleboardConfig;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -19,23 +20,10 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  private boolean enabled;
-
-  public void enable() {
-    this.enabled = true;
-  }
-
-  public void disable() {
-    this.enabled = false;
-  }
-
-  public boolean isEnabled() {
-    return this.enabled;
-  }
-
   private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
 
   private double leftDemand, rightDemand;
@@ -45,12 +33,13 @@ public class Drivetrain extends SubsystemBase {
   public boolean slowEnabled = false;
 
   private DifferentialDriveOdometry odometry;
-  private final NetworkTableEntry xDisplay, yDisplay, headingDisplay, leftEncoderDisplay, rightEncoderDisplay;
 
   private AHRS navx;
   private double navxTestAngle;
   private boolean navxTestPassed = false;
-  private final NetworkTableEntry navxReport;
+
+  private final ShuffleboardTab drivetrainTab;
+  private final NetworkTableEntry xPosEntry, yPosEntry, headingEntry, leftEncoderEntry, rightEncoderEntry, leftSpeedEntry, rightSpeedEntry, navxReport;
 
   public Drivetrain() {
     rightDrive = new CANSparkMax(DrivetrainConfig.frontLeftMotorPort,
@@ -71,29 +60,10 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.follow(leftDrive);
     rightFollower.follow(rightDrive);
 
-    navx = new AHRS();
-
-    ShuffleboardLayout testReportLayout = Shuffleboard.getTab(Dashboard.systemsTestTabName)
-        .getLayout("Drivetrain", BuiltInLayouts.kList)
-        .withSize(2, 1)
-        .withPosition(Dashboard.drivetrainTestPosition, 0);
-
-    navxReport = testReportLayout.add("NavX", false).getEntry();
-
     leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
 
-    setCoastMode(false);
-
-    ShuffleboardLayout odometryLayout = Shuffleboard.getTab(Dashboard.developmentTabName)
-        .getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5)
-        .withPosition(Dashboard.drivetrainDisplayPosition, 0);
-
-    xDisplay = odometryLayout.add("X", 0.0).getEntry();
-    yDisplay = odometryLayout.add("Y", 0.0).getEntry();
-    headingDisplay = odometryLayout.add("Heading", 0.0).getEntry();
-    leftEncoderDisplay = odometryLayout.add("Left Encoder", 0).getEntry();
-    rightEncoderDisplay = odometryLayout.add("Right Encoder", 0).getEntry();
+    navx = new AHRS();
 
     odometry = new DifferentialDriveOdometry(new Rotation2d(0));
 
@@ -102,6 +72,31 @@ public class Drivetrain extends SubsystemBase {
 
     leftDemand = 0.0;
     rightDemand = 0.0;
+
+    // Shuffleboard
+    drivetrainTab = Shuffleboard.getTab("Drivetrain");
+
+    ShuffleboardLayout testReportLayout = drivetrainTab
+        .getLayout("Drivetrain", BuiltInLayouts.kList)
+        .withSize(2, 1)
+        .withPosition(Dashboard.drivetrainTestPosition, 0);
+
+    navxReport = testReportLayout.add("NavX", false).getEntry();
+
+    setCoastMode(false);
+
+    ShuffleboardLayout odometryLayout = drivetrainTab
+        .getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5)
+        .withPosition(Dashboard.drivetrainDisplayPosition, 0);
+
+    xPosEntry = odometryLayout.add("X", 0.0).getEntry();
+    yPosEntry = odometryLayout.add("Y", 0.0).getEntry();
+    headingEntry = odometryLayout.add("Heading", 0.0).getEntry();
+    leftEncoderEntry = odometryLayout.add("Left Encoder", 0).getEntry();
+    rightEncoderEntry = odometryLayout.add("Right Encoder", 0).getEntry();
+
+    leftSpeedEntry = drivetrainTab.add("Left Speed", 0).getEntry();
+    rightSpeedEntry = drivetrainTab.add("Right Speed", 0).getEntry();
   }
 
   public void init() {
@@ -110,14 +105,20 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    getEncoderPositions();
+    updateHeading();
+    updateOdometry();
+  }
+
+  void getEncoderPositions() {
     leftPosition = leftDrive.getEncoder().getPosition();
     rightPosition = rightDrive.getEncoder().getPosition();
 
-    updateHeading();
-    updateOdometry();
+    if (!ShuffleboardConfig.drivetrainPrintsEnabled)
+      return;
 
-    leftEncoderDisplay.setNumber(leftPosition);
-    rightEncoderDisplay.setNumber(rightPosition);
+    leftEncoderEntry.setNumber(leftPosition);
+    rightEncoderEntry.setNumber(rightPosition);
   }
 
   public void updateOdometry() {
@@ -125,9 +126,13 @@ public class Drivetrain extends SubsystemBase {
 
     // Update Shuffleboard Outputs
     Pose2d currentPose = odometry.getPoseMeters();
-    xDisplay.setNumber(currentPose.getX());
-    yDisplay.setNumber(currentPose.getY());
-    headingDisplay.setNumber(currentPose.getRotation().getDegrees());
+
+    if (!ShuffleboardConfig.drivetrainPrintsEnabled)
+      return;
+
+    xPosEntry.setNumber(currentPose.getX());
+    yPosEntry.setNumber(currentPose.getY());
+    headingEntry.setNumber(currentPose.getRotation().getDegrees());
   }
 
   public void updateHeading() {
@@ -198,12 +203,16 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOutputs() {
-
     leftDemand *= speedFactor;
     rightDemand *= speedFactor;
 
     leftDrive.set(leftDemand);
     rightDrive.set(rightDemand);
+
+    if (ShuffleboardConfig.drivetrainPrintsEnabled) {
+      leftSpeedEntry.setDouble(leftDemand);
+      rightSpeedEntry.setDouble(rightDemand);
+    }
 
     leftDemand = 0.0;
     rightDemand = 0.0;

@@ -79,4 +79,9 @@ public final class Constants {
     public static final boolean botMotorInverted = false;
     public static final boolean topMotorInverted = false;
   }
+
+  public final static class ShuffleboardConfig {
+    public static final boolean drivetrainPrintsEnabled = true;
+    public static final boolean rakePrintsEnabled = true;
+  }
 }

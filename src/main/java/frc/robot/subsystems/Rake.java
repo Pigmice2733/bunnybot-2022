@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RakeConfig;
+import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
 
 public class Rake extends SubsystemBase {
@@ -64,9 +65,10 @@ public class Rake extends SubsystemBase {
 
   public void updateAngle() {
     this.angle = (leftMotor.getSelectedSensorPosition() + rightMotor.getSelectedSensorPosition())
-        * 45 / 1024; // average angle for two motors (should be the same anyway)
-        
-    angleEntry.setDouble(angle);
+      * 45 / 1024; // average angle for two motors (should be the same anyway)
+    
+    if (ShuffleboardConfig.rakePrintsEnabled)
+      angleEntry.setDouble(angle);
   }
 
   public double getAngle() {
