@@ -5,12 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
 
 public class RotateRakeAngle extends PIDCommand {
@@ -23,7 +19,7 @@ public class RotateRakeAngle extends PIDCommand {
         new PIDController(0.1, 0.02, 0.0),
         rake::getAngle,
         targetAngle,
-        (output) -> rake.setMotorSpeed(output),
+        (output) -> rake.setSpeedAuto(output),
         rake);
 
     getController().setTolerance(errorThreshold, turnSpeedThreshold);

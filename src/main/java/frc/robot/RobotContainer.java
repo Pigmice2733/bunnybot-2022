@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ScoopConfig;
 import frc.robot.commands.RotateRakeAngle;
-import frc.robot.commands.RotateRakeSpeed;
+import frc.robot.commands.RotateRakeManual;
 import frc.robot.commands.RunScoop;
 import frc.robot.subsystems.Rake;
 import frc.robot.subsystems.ScoopIntake;
@@ -62,7 +62,7 @@ public class RobotContainer {
      * controls::getTurnSpeed));
      */
 
-    rake.setDefaultCommand(new RotateRakeSpeed(controls::getRakeRotationSpeed, rake));
+    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
     // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
