@@ -10,16 +10,12 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.Constants.RakeConfig;
-import frc.robot.Constants.ScoopConfig;
-import frc.robot.commands.RotateRakeAngle;
-import frc.robot.commands.RotateRakeManual;
-import frc.robot.commands.RunScoop;
-import frc.robot.subsystems.Rake;
-import frc.robot.subsystems.ScoopIntake;
 import frc.robot.commands.drivetrain.ArcadeDrive;
-import frc.robot.subsystems.Conveyor;
+import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Rake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -55,14 +51,12 @@ public class RobotContainer {
     operator = new XboxController(1);
     controls = new Controls(driver, operator);
 
-    /*
-     * drivetrain.setDefaultCommand(new ArcadeDrive(
-     * drivetrain,
-     * controls::getDriveSpeed,
-     * controls::getTurnSpeed));
-     */
+    drivetrain.setDefaultCommand(new ArcadeDrive(
+        drivetrain,
+        controls::getDriveSpeed,
+        controls::getTurnSpeed));
 
-    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
     // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
@@ -99,14 +93,19 @@ public class RobotContainer {
     new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
     new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection); */
 
-    new JoystickButton(driver, Button.kA.value)
+    new JoystickButton(operator, Button.kA.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
-    new JoystickButton(driver, Button.kB.value)
+    new JoystickButton(operator, Button.kB.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
-    new JoystickButton(driver, Button.kX.value)
+    new JoystickButton(operator, Button.kX.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
-    new JoystickButton(driver, Button.kY.value)
+    new JoystickButton(operator, Button.kY.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+
+    new JoystickButton(operator, Button.kRightBumper.value)
+        .whenPressed(new InstantCommand(rake::toggleMode));
+    new JoystickButton(operator, Button.kLeftBumper.value)
+        .whenPressed(new InstantCommand(rake::toggleDisabled));
   }
 
   /**

@@ -34,7 +34,7 @@ public class Controls {
     }
 
     public double getRakeRotationSpeed() {
-        double joystickValue = driver.getLeftY();
+        double joystickValue = operator.getRightTriggerAxis() - operator.getLeftTriggerAxis();
         return joystickValue * RakeConfig.motorSpeed;
     }
 }

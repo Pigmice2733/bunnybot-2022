@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.rake;
 
 import java.util.function.DoubleSupplier;
 
