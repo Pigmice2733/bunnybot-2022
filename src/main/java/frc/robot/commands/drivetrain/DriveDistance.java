@@ -11,8 +11,6 @@ import frc.robot.subsystems.Drivetrain;
 
 public class DriveDistance extends ProfiledPIDCommand {
   private final Drivetrain drivetrain;
-  private final double maxError = 0.05;
-  private final double maxVelocity = 1.0;
 
   public DriveDistance(Drivetrain drivetrain, double distance) {
     super(
@@ -32,7 +30,7 @@ public class DriveDistance extends ProfiledPIDCommand {
 
     this.drivetrain = drivetrain;
 
-    getController().setTolerance(maxError, maxVelocity);
+    getController().setTolerance(DrivetrainConfig.maxError, DrivetrainConfig.maxVelocity);
   }
 
   @Override

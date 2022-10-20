@@ -44,6 +44,7 @@ public final class Constants {
     public static final double wheelDiameterMeters = 1;
     public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) / gearRatio;
 
+    public static final double maxError = 0.05;
     public static final double maxVelocity = 1.0;
     public static final double maxAcceleration = 1.5;
   }
