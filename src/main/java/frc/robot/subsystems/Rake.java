@@ -20,7 +20,8 @@ public class Rake extends SubsystemBase {
   private final TalonSRX rightMotor;
   private double angle;
 
-  RakeMode mode = RakeMode.Manual;
+  private RakeMode mode = RakeMode.Manual;
+  private RakeMode prevMode;
 
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry angleEntry;
@@ -45,16 +46,12 @@ public class Rake extends SubsystemBase {
   }
 
   public void setSpeedManual(double speed) {
-    if (mode != RakeMode.Manual)
-      return;
-    
+    if (mode == RakeMode.Manual)
       setMotorSpeeds(speed);
   }
 
   public void setSpeedAuto(double speed) {
-    if (mode != RakeMode.Automatic)
-      return;
-
+    if (mode == RakeMode.Automatic)
       setMotorSpeeds(speed);
   }
 
@@ -65,8 +62,8 @@ public class Rake extends SubsystemBase {
 
   public void updateAngle() {
     this.angle = (leftMotor.getSelectedSensorPosition() + rightMotor.getSelectedSensorPosition())
-      * 45 / 1024; // average angle for two motors (should be the same anyway)
-    
+        * 360 / (4096 * 2); // average angle for two motors (should be the same anyway)
+
     if (ShuffleboardConfig.rakePrintsEnabled)
       angleEntry.setDouble(angle);
   }
@@ -76,6 +73,24 @@ public class Rake extends SubsystemBase {
   }
 
   public void setMode(RakeMode mode) {
+    prevMode = this.mode;
     this.mode = mode;
+  }
+
+  public void toggleMode() {
+    if (this.mode == RakeMode.Automatic) {
+      setMode(RakeMode.Manual);
+    }
+    if (this.mode == RakeMode.Manual) {
+      setMode(RakeMode.Automatic);
+    }
+  }
+
+  public void toggleDisabled() {
+    if (this.mode == RakeMode.Disabled) {
+      setMode(prevMode);
+    } else {
+      setMode(RakeMode.Disabled);
+    }
   }
 }

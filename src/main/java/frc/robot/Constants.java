@@ -60,9 +60,9 @@ public final class Constants {
     public static final int rightMotorID = 0;
     public static final double motorSpeed = 1;
 
-    public static final double startAngle = 40;
+    public static final double startAngle = 60;
     public static final double raiseAngle = 15;
-    public static final double dispenseAngle = 160;
+    public static final double dispenseAngle = 125;
     public static final double intakeAngle = 0;
   }
 

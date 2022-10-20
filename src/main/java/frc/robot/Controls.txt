@@ -1,12 +1,19 @@
 This file will be used to type out controls after meeting with the drive team.
 
 
-11 Oct 22 (not finalized)
+18 Oct 22 (not finalized)
 
 DRIVER:
-left joystick: Y - forward speed / rake rotation
+left joystick: Y - forward speed
 right joystick: X - turn speed
+
+OPERATOR:
+right trigger: move rake up (positive)
+left trigger: move rake down (negative)
+(speed of movement equal to right - left)
 X button: rotate rake to starting angle
 Y button: rotate rake to dispensing angle
 A button: rotate rake to ground-level angle
 B button: rotate rake to just above ground level
+right bumper: toggle rake mode (automatic/manual)
+left bumper: toggle rake mode (enabled/disabled)
