@@ -45,9 +45,20 @@ public final class Constants {
     public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) * gearRatio; // Encoder rotations to distance moved
     public static final double drivetrainWidthMeters = Utils.inchesToMeters(1); // Distance between left and right wheels in meters
 
-    public static final double maxError = 0.05;
-    public static final double maxVelocity = 1.0;
-    public static final double maxAcceleration = 1.5;
+    // Path following PID
+    public static final double kP = 9.95;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    // Drivetrain characterization
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+
+    // Ramsete config
+    public static final double kB = 2.0;
+    public static final double kZeta = 0.7;
+
   }
 
   public final static class RakeConfig {
