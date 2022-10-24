@@ -25,8 +25,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.util.Units;
 
 public class Drivetrain extends SubsystemBase {
+  private final NetworkTableEntry xPosEntry, yPosEntry, headingEntry, leftOutputEntry, rightOutputEntry;
+
   private final CANSparkMax leftDrive = new CANSparkMax(DrivetrainConfig.leftDrivePort, MotorType.kBrushless);
   private final CANSparkMax rightDrive = new CANSparkMax(DrivetrainConfig.rightDrivePort, MotorType.kBrushless);
 
@@ -51,6 +54,16 @@ public class Drivetrain extends SubsystemBase {
 
     leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
+  
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
+    ShuffleboardLayout odometryLayout = drivetrainTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
+
+    xPosEntry = odometryLayout.add("X", 0.0).getEntry();
+    yPosEntry = odometryLayout.add("Y", 0.0).getEntry();
+    headingEntry = odometryLayout.add("Heading", 0.0).getEntry();
+
+    leftOutputEntry = drivetrainTab.add("Left Output", 0).getEntry();
+    rightOutputEntry = drivetrainTab.add("Right Output", 0).getEntry();
   }
 
   public void periodic() {
@@ -59,6 +72,12 @@ public class Drivetrain extends SubsystemBase {
 
   void updateOdometry() {
     pose = odometry.update(getHeading(), getMotorSpeeds())
+
+    if (ShuffleboardConfig.drivetrainPrintsEnabled) {
+      xPosEntry.setDouble(pose.getX());
+      yPosEntry.setDouble(pose.getY());
+      headingEntry.setDouble(pose.getRotation().getDegrees());
+    }
   }
 
   public Rotation2d getHeading() {
@@ -66,9 +85,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public DifferentialDriveWheelSpeeds getMotorSpeeds() {
-    // divides by 60 to convert from m/min to m/s
-    left = leftDrive.getEncoder().getVelocity() / 60;
-    right = rightDrive.getEncoder().getVelocity() / 60;
+    left = leftDrive.getEncoder().getVelocity();
+    right = rightDrive.getEncoder().getVelocity();
 
     return new DifferentialDriveWheelSpeeds(left, right);
   }
@@ -94,15 +112,20 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double forward, double turn) {
-    leftDemand = forward + turn;
-    rightDemand = forward - turn;
+    double left = forward + turn;
+    double right = forward - turn;
 
-    updateOutputs();
+    updateOutputs(left, right);
   }
 
   public void updateOutputs(double left, double right) {
     leftDrive.set(left);
     rightDrive.set(right);
+
+    if (ShuffleboardConfig.drivetrainPrintsEnabled) {
+      leftOutputEntry.setDouble(left);
+      rightOutputEntry.setDouble(right);
+    }
   }
 
   public void stop() {
@@ -110,5 +133,13 @@ public class Drivetrain extends SubsystemBase {
     rightDemand = 0.0;
 
     updateOutputs();
+  }
+
+  public void resetOdometry() {
+    odometry.resetPosition(new Pose2d(), new Rotation2d());
+    navx.reset();
+
+    leftDrive.getEncoder().resetPosition();
+    rightDrive.getEncoder().resetPosition();
   }
 }

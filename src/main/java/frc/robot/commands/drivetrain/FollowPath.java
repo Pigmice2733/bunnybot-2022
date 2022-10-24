@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 public class FollowPath extends RamseteCommand {
     private Drivetrain drivetrain;
 
-    public Ramsete(Drivetrain drivetrain, Trajectory trajectory) {
+    public FollowPath(Drivetrain drivetrain, Trajectory trajectory) {
         super(
             trajectory,
             drivetrain::getPose,
@@ -28,6 +28,11 @@ public class FollowPath extends RamseteCommand {
         addRequirements(drivetrain);
 
         this.drivetrain = drivetrain;
+    }
+
+    @Override
+    public void initialize() {
+        drivetrain.resetOdometry();
     }
 
     @Override
