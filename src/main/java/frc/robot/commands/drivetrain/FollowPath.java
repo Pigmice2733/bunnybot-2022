@@ -1,13 +1,11 @@
-package com.pigmice.frc.robot.commands.drivetrain;
-
-import com.pigmice.frc.robot.Constants.DrivetrainConfig;
-import com.pigmice.frc.robot.subsystems.Drivetrain;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.Constants.DrivetrainConfig;
+import frc.robot.subsystems.Drivetrain;
 
 public class FollowPath extends RamseteCommand {
     private Drivetrain drivetrain;

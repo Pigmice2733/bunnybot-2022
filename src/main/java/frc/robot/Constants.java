@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -43,7 +45,7 @@ public final class Constants {
     public static final double gearRatio = 1; // Times motor has to rotate for wheel to rotate once
     public static final double wheelDiameterMeters = Units.inchesToMeters(1);
     public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) * gearRatio; // Encoder rotations to distance moved
-    public static final double drivetrainWidthMeters = Utils.inchesToMeters(1); // Distance between left and right wheels in meters
+    public static final double drivetrainWidthMeters = Units.inchesToMeters(1); // Distance between left and right wheels in meters
 
     // Path following PID
     public static final double kP = 9.95;

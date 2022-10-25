@@ -4,13 +4,11 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Constants.Dashboard;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.ShuffleboardConfig;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,14 +16,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.kinematics.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class Drivetrain extends SubsystemBase {
   private final NetworkTableEntry xPosEntry, yPosEntry, headingEntry, leftOutputEntry, rightOutputEntry;
@@ -36,12 +33,12 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax leftFollow = new CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
   private final CANSparkMax rightFollow = new CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
 
-  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private final AHRS gyro = new AHRS();
 
-  private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.drivetrainWidthMeters);
-  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry();
+  private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivetrainConfig.drivetrainWidthMeters);
+  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d());
 
-  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV, DrivetrainConfig.kA);
+  private  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV, DrivetrainConfig.kA);
 
   private Pose2d pose;
 
@@ -56,14 +53,14 @@ public class Drivetrain extends SubsystemBase {
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
   
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-    ShuffleboardLayout odometryLayout = drivetrainTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
+    ShuffleboardLayout odometryLayout = driveTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
 
     xPosEntry = odometryLayout.add("X", 0.0).getEntry();
     yPosEntry = odometryLayout.add("Y", 0.0).getEntry();
     headingEntry = odometryLayout.add("Heading", 0.0).getEntry();
 
-    leftOutputEntry = drivetrainTab.add("Left Output", 0).getEntry();
-    rightOutputEntry = drivetrainTab.add("Right Output", 0).getEntry();
+    leftOutputEntry = driveTab.add("Left Output", 0).getEntry();
+    rightOutputEntry = driveTab.add("Right Output", 0).getEntry();
   }
 
   public void periodic() {
@@ -71,7 +68,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   void updateOdometry() {
-    pose = odometry.update(getHeading(), getMotorSpeeds())
+    DifferentialDriveWheelSpeeds speeds = getMotorSpeeds();
+    pose = odometry.update(getHeading(), speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       xPosEntry.setDouble(pose.getX());
@@ -85,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public DifferentialDriveWheelSpeeds getMotorSpeeds() {
-    left = leftDrive.getEncoder().getVelocity();
-    right = rightDrive.getEncoder().getVelocity();
+    double left = leftDrive.getEncoder().getVelocity();
+    double right = rightDrive.getEncoder().getVelocity();
 
     return new DifferentialDriveWheelSpeeds(left, right);
   }
@@ -129,17 +127,14 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void stop() {
-    leftDemand = 0.0;
-    rightDemand = 0.0;
-
-    updateOutputs();
+    updateOutputs(0, 0);
   }
 
   public void resetOdometry() {
     odometry.resetPosition(new Pose2d(), new Rotation2d());
-    navx.reset();
+    gyro.reset();
 
-    leftDrive.getEncoder().resetPosition();
-    rightDrive.getEncoder().resetPosition();
+    leftDrive.getEncoder().setPosition(0);
+    rightDrive.getEncoder().setPosition(0);
   }
 }
