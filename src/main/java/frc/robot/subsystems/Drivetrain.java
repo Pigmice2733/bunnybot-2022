@@ -35,10 +35,12 @@ public class Drivetrain extends SubsystemBase {
 
   private final AHRS gyro = new AHRS();
 
-  private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DrivetrainConfig.drivetrainWidthMeters);
+  private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
+      DrivetrainConfig.drivetrainWidthMeters);
   private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d());
 
-  private  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV, DrivetrainConfig.kA);
+  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV,
+      DrivetrainConfig.kA);
 
   private Pose2d pose;
 
@@ -51,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
 
     leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
-  
+
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
     ShuffleboardLayout odometryLayout = driveTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
 
@@ -69,9 +71,10 @@ public class Drivetrain extends SubsystemBase {
     updateOdometry();
   }
 
-  void updateOdometry() {
-    DifferentialDriveWheelSpeeds speeds = getMotorSpeeds();
-    pose = odometry.update(getHeading(), leftDistance(), rightDistance());
+  /** Updates the odometry pose with the heading and position measurements. */
+  private void updateOdometry() {
+    // DifferentialDriveWheelSpeeds speeds = getMotorSpeeds();
+    pose = odometry.update(getHeading(), getLeftDistance(), getRightDistance());
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       xPosEntry.setDouble(pose.getX());
@@ -81,9 +84,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Rotation2d getHeading() {
-    return new Rotation2d(-gyro.getAngle() * (Math.PI/180));
+    return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
 
+  /** Returns a DifferentialDriveWheelSpeeds object from the encoder velocities. */
   public DifferentialDriveWheelSpeeds getMotorSpeeds() {
     double left = leftDrive.getEncoder().getVelocity();
     double right = rightDrive.getEncoder().getVelocity();
@@ -91,11 +95,11 @@ public class Drivetrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(left, right);
   }
 
-  public double leftDistance() {
+  public double getLeftDistance() {
     return leftDrive.getEncoder().getPosition();
   }
 
-  public double rightDistance() {
+  public double getRightDistance() {
     return rightDrive.getEncoder().getPosition();
   }
 
@@ -111,14 +115,29 @@ public class Drivetrain extends SubsystemBase {
     return pose;
   }
 
+  /** Drives the robot with given speeds for left and right wheels.
+   * 
+   * @param left speed of left wheels
+   * @param right speed of right wheels
+   */
   public void tankDrive(double left, double right) {
     updateOutputs(left, right);
   }
 
+  /** Drives the robot with given voltages for left and right wheels.
+   * 
+   * @param left voltage for left wheels
+   * @param right voltage for right wheels
+   */
   public void tankDriveVolts(double left, double right) {
     updateOutputs(left / 12, right / 12); // Divides by 12 to scale possible inputs between 0 and 1 (12 in max volts)
   }
 
+  /** Drives the robot with given directional and rotational speeds.
+   * 
+   * @param forward speed in robot's current direction
+   * @param turn turn speed (clockwise is positive)
+   */
   public void arcadeDrive(double forward, double turn) {
     double left = forward + turn;
     double right = forward - turn;
@@ -128,7 +147,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void updateOutputs(double left, double right) {
     left = Math.max(Math.min(0.2, left), -0.2);
-    right = Math.max(Math.min(0.2, left), -0.2);;
+    right = Math.max(Math.min(0.2, left), -0.2);
+    ;
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       leftOutputEntry.setDouble(left);
