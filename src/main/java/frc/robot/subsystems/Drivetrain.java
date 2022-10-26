@@ -43,8 +43,8 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d pose;
 
   public Drivetrain() {
-    leftFollow.follow(leftDrive);
-    rightFollow.follow(rightDrive);
+    //leftFollow.follow(leftDrive);
+    //rightFollow.follow(rightDrive);
 
     leftDrive.setInverted(false);
     rightDrive.setInverted(true);
@@ -61,6 +61,8 @@ public class Drivetrain extends SubsystemBase {
 
     leftOutputEntry = driveTab.add("Left Output", 0).getEntry();
     rightOutputEntry = driveTab.add("Right Output", 0).getEntry();
+
+    resetOdometry();
   }
 
   public void periodic() {
@@ -69,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
 
   void updateOdometry() {
     DifferentialDriveWheelSpeeds speeds = getMotorSpeeds();
-    pose = odometry.update(getHeading(), speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
+    pose = odometry.update(getHeading(), leftDistance(), rightDistance());
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       xPosEntry.setDouble(pose.getX());
@@ -79,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Rotation2d getHeading() {
-    return new Rotation2d(-gyro.getAngle());
+    return new Rotation2d(-gyro.getAngle() * (Math.PI/180));
   }
 
   public DifferentialDriveWheelSpeeds getMotorSpeeds() {
@@ -87,6 +89,14 @@ public class Drivetrain extends SubsystemBase {
     double right = rightDrive.getEncoder().getVelocity();
 
     return new DifferentialDriveWheelSpeeds(left, right);
+  }
+
+  public double leftDistance() {
+    return leftDrive.getEncoder().getPosition();
+  }
+
+  public double rightDistance() {
+    return rightDrive.getEncoder().getPosition();
   }
 
   public SimpleMotorFeedforward getFeedForward() {
@@ -117,13 +127,16 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOutputs(double left, double right) {
-    leftDrive.set(left);
-    rightDrive.set(right);
+    left = Math.max(Math.min(0.2, left), -0.2);
+    right = Math.max(Math.min(0.2, left), -0.2);;
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       leftOutputEntry.setDouble(left);
       rightOutputEntry.setDouble(right);
     }
+
+    leftDrive.set(left);
+    rightDrive.set(right);
   }
 
   public void stop() {

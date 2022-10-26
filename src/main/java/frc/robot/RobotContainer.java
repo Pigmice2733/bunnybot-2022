@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
@@ -31,7 +32,7 @@ public class RobotContainer {
 
   private final Controls controls;
   private final Drivetrain drivetrain;
-  private final Rake rake;
+  //private final Rake rake;
   // private final ScoopIntake scoop;
   // private final Conveyor conveyor;
 
@@ -43,7 +44,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     drivetrain = new Drivetrain();
-    rake = new Rake();
+    //rake = new Rake();
     // scoop = new ScoopIntake();
     // conveyor = new Conveyor();
 
@@ -56,7 +57,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed));
 
-    rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
+    //rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
     // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
@@ -93,19 +94,19 @@ public class RobotContainer {
     new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
     new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection); */
 
-    new JoystickButton(operator, Button.kA.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
-    new JoystickButton(operator, Button.kB.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
-    new JoystickButton(operator, Button.kX.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
-    new JoystickButton(operator, Button.kY.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+    // new JoystickButton(operator, Button.kA.value)
+    //     .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+    // new JoystickButton(operator, Button.kB.value)
+    //     .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
+    // new JoystickButton(operator, Button.kX.value)
+    //     .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+    // new JoystickButton(operator, Button.kY.value)
+    //     .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
 
-    new JoystickButton(operator, Button.kRightBumper.value)
-        .whenPressed(new InstantCommand(rake::toggleMode));
-    new JoystickButton(operator, Button.kLeftBumper.value)
-        .whenPressed(new InstantCommand(rake::toggleDisabled));
+    // new JoystickButton(operator, Button.kRightBumper.value)
+    //     .whenPressed(new InstantCommand(rake::toggleMode));
+    // new JoystickButton(operator, Button.kLeftBumper.value)
+    //     .whenPressed(new InstantCommand(rake::toggleDisabled));
   }
 
   /**
@@ -115,6 +116,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+    return new DriveDistance(drivetrain, 1);
   }
 }

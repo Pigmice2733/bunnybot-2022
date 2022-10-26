@@ -29,7 +29,7 @@ public final class Constants {
   }
 
   public final static class DrivetrainConfig {
-    public static final int leftDrivePort = 0;
+    public static final int leftDrivePort = 1;
     public static final int rightDrivePort = 4;
     public static final int leftFollowPort = 2;
     public static final int rightFollowPort = 3;
@@ -37,15 +37,15 @@ public final class Constants {
     public static final double axisThreshold = 0.1;
     public static final double wheelBase = 0.5; // circumference / gear ratio
 
-    public static final double driveSpeed = 1;
-    public static final double turnSpeed = 1;
+    public static final double driveSpeed = .3;
+    public static final double turnSpeed = .2;
 
     public static final double slowMultiplier = 0.25;
 
-    public static final double gearRatio = 1; // Times motor has to rotate for wheel to rotate once
-    public static final double wheelDiameterMeters = Units.inchesToMeters(1);
+    public static final double gearRatio = 1 / 7.5833; // Times motor has to rotate for wheel to rotate once
+    public static final double wheelDiameterMeters = Units.inchesToMeters(4);
     public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) * gearRatio; // Encoder rotations to distance moved
-    public static final double drivetrainWidthMeters = Units.inchesToMeters(1); // Distance between left and right wheels in meters
+    public static final double drivetrainWidthMeters = Units.inchesToMeters(28); // Distance between left and right wheels in meters
 
     // Path following PID
     public static final double kP = 9.95;

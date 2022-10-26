@@ -20,5 +20,6 @@ public class ArcadeDrive extends CommandBase {
     @Override
     public void execute() {
         drivetrain.arcadeDrive(forward.getAsDouble(), rotate.getAsDouble());
+        System.out.println(forward.getAsDouble() + " " + rotate.getAsDouble());
     }
 }
