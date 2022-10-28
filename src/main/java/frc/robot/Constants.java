@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -29,10 +30,10 @@ public final class Constants {
   }
 
   public final static class DrivetrainConfig {
-    public static final int leftDrivePort = 1;
+    public static final int leftDrivePort = 2;
     public static final int rightDrivePort = 4;
-    public static final int leftFollowPort = 2;
-    public static final int rightFollowPort = 3;
+    public static final int leftFollowPort = 0;
+    public static final int rightFollowPort = 0;
 
     public static final double axisThreshold = 0.1;
     public static final double wheelBase = 0.5; // circumference / gear ratio
@@ -48,19 +49,22 @@ public final class Constants {
     public static final double drivetrainWidthMeters = Units.inchesToMeters(28); // Distance between left and right wheels in meters
 
     // Path following PID
-    public static final double kP = 9.95;
+    //public static final double kP = 4.3789;
+    public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
 
     // Drivetrain characterization
-    public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
+    public static final double kS = 0.17247;
+    public static final double kV = 2.8886;
+    public static final double kA = 2.1367;
 
     // Ramsete config
     public static final double kB = 2.0;
     public static final double kZeta = 0.7;
 
+    // Config for path following
+    public static final TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
   }
 
   public final static class RakeConfig {

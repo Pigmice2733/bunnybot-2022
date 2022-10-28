@@ -30,14 +30,16 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax leftDrive = new CANSparkMax(DrivetrainConfig.leftDrivePort, MotorType.kBrushless);
   private final CANSparkMax rightDrive = new CANSparkMax(DrivetrainConfig.rightDrivePort, MotorType.kBrushless);
 
-  private final CANSparkMax leftFollow = new CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
-  private final CANSparkMax rightFollow = new CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
+  // private final CANSparkMax leftFollow = new
+  // CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
+  // private final CANSparkMax rightFollow = new
+  // CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
 
   private final AHRS gyro = new AHRS();
 
   private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
       DrivetrainConfig.drivetrainWidthMeters);
-  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d());
+  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), new Pose2d());
 
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV,
       DrivetrainConfig.kA);
@@ -45,11 +47,16 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d pose;
 
   public Drivetrain() {
-    //leftFollow.follow(leftDrive);
-    //rightFollow.follow(rightDrive);
+    // leftFollow.follow(leftDrive);
+    // rightFollow.follow(rightDrive);
 
-    leftDrive.setInverted(false);
-    rightDrive.setInverted(true);
+    rightDrive.restoreFactoryDefaults();
+    leftDrive.restoreFactoryDefaults();
+    // leftFollow.restoreFactoryDefaults();
+    // rightFollow.restoreFactoryDefaults();
+
+    leftDrive.setInverted(true);
+    rightDrive.setInverted(false);
 
     leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
@@ -73,7 +80,6 @@ public class Drivetrain extends SubsystemBase {
 
   /** Updates the odometry pose with the heading and position measurements. */
   private void updateOdometry() {
-    // DifferentialDriveWheelSpeeds speeds = getMotorSpeeds();
     pose = odometry.update(getHeading(), getLeftDistance(), getRightDistance());
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
@@ -83,71 +89,93 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  /** @return Current robot rotaiton since last reset */
   public Rotation2d getHeading() {
     return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
 
-  /** Returns a DifferentialDriveWheelSpeeds object from the encoder velocities. */
-  public DifferentialDriveWheelSpeeds getMotorSpeeds() {
+  /** @return a DifferentialDriveWheelSpeeds object from the encoder velocities. */
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     double left = leftDrive.getEncoder().getVelocity();
     double right = rightDrive.getEncoder().getVelocity();
 
     return new DifferentialDriveWheelSpeeds(left, right);
   }
 
+  /** @return Distance moved by left wheel since encoder reset  */
   public double getLeftDistance() {
     return leftDrive.getEncoder().getPosition();
   }
 
+  /** @return Distance moved by right wheel since encoder reset  */
   public double getRightDistance() {
     return rightDrive.getEncoder().getPosition();
   }
 
+  /** @return Drivetrains FeedForward  */
   public SimpleMotorFeedforward getFeedForward() {
     return feedforward;
   }
 
+  /** @return Drivetrain */
   public DifferentialDriveKinematics getKinematics() {
-    return kinematics;
+    return kinematics;  
   }
 
+  /** @return Current robot pose since last reset */
   public Pose2d getPose() {
     return pose;
   }
 
-  /** Drives the robot with given speeds for left and right wheels.
+  /* Zeros odometry, gyro, and drive encoders. */
+  public void resetOdometry() {
+    gyro.reset();
+    odometry.resetPosition(new Pose2d(), new Rotation2d());
+
+    leftDrive.getEncoder().setPosition(0);
+    rightDrive.getEncoder().setPosition(0);
+  }
+
+  /**
+   * Drives the robot with given speeds for left and right wheels.
    * 
-   * @param left speed of left wheels
+   * @param left  speed of left wheels
    * @param right speed of right wheels
    */
   public void tankDrive(double left, double right) {
     updateOutputs(left, right);
   }
 
-  /** Drives the robot with given voltages for left and right wheels.
+  /**
+   * Drives the robot with given voltages for left and right wheels.
    * 
-   * @param left voltage for left wheels
+   * @param left  voltage for left wheels
    * @param right voltage for right wheels
    */
   public void tankDriveVolts(double left, double right) {
     updateOutputs(left / 12, right / 12); // Divides by 12 to scale possible inputs between 0 and 1 (12 in max volts)
   }
 
-  /** Drives the robot with given directional and rotational speeds.
+  /**
+   * Drives the robot with given directional and rotational speeds.
    * 
    * @param forward speed in robot's current direction
-   * @param turn turn speed (clockwise is positive)
+   * @param turn    turn speed (clockwise is positive)
    */
   public void arcadeDrive(double forward, double turn) {
-    double left = forward + turn;
-    double right = forward - turn;
+    double left = forward - turn;
+    double right = forward + turn;
 
     updateOutputs(left, right);
   }
 
+  public void stop() {
+    updateOutputs(0, 0);
+  }
+
   public void updateOutputs(double left, double right) {
-    left = Math.max(Math.min(0.2, left), -0.2);
-    right = Math.max(Math.min(0.2, left), -0.2);
+    left = Math.max(Math.min(0.3, left), -0.3);
+    right = Math.max(Math.min(0.3, right), -0.3);
     ;
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
@@ -157,17 +185,5 @@ public class Drivetrain extends SubsystemBase {
 
     leftDrive.set(left);
     rightDrive.set(right);
-  }
-
-  public void stop() {
-    updateOutputs(0, 0);
-  }
-
-  public void resetOdometry() {
-    odometry.resetPosition(new Pose2d(), new Rotation2d());
-    gyro.reset();
-
-    leftDrive.getEncoder().setPosition(0);
-    rightDrive.getEncoder().setPosition(0);
   }
 }

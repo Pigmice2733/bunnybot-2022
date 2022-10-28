@@ -17,7 +17,7 @@ public class FollowPath extends RamseteCommand {
             new RamseteController(DrivetrainConfig.kB, DrivetrainConfig.kZeta),
             drivetrain.getFeedForward(),
             drivetrain.getKinematics(),
-            drivetrain::getMotorSpeeds,
+            drivetrain::getWheelSpeeds,
             new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Left
             new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Right
             drivetrain::tankDriveVolts,

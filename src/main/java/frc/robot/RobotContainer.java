@@ -4,13 +4,23 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
@@ -115,7 +125,31 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new DriveDistance(drivetrain, 1);
+    // return new DriveDistance(drivetrain, 10);
+    drivetrain.resetOdometry();
+
+    TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
+        config.setKinematics(drivetrain.getKinematics());
+
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            List.of(new Pose2d(), new Pose2d(3, 0, new Rotation2d(0))),
+            config
+            );
+
+
+        RamseteCommand command = new RamseteCommand(
+            trajectory,
+            drivetrain::getPose,
+            new RamseteController(DrivetrainConfig.kB, DrivetrainConfig.kZeta),
+            drivetrain.getFeedForward(),
+            drivetrain.getKinematics(),
+            drivetrain::getWheelSpeeds,
+            new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Left
+            new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Right
+            drivetrain::tankDriveVolts,
+            drivetrain
+        );
+
+        return command;
   }
 }
