@@ -9,6 +9,7 @@ import frc.robot.Constants.ShuffleboardConfig;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -176,14 +177,20 @@ public class Drivetrain extends SubsystemBase {
   public void updateOutputs(double left, double right) {
     left = Math.max(Math.min(0.3, left), -0.3);
     right = Math.max(Math.min(0.3, right), -0.3);
-    ;
 
+    leftDrive.set(left);
+    rightDrive.set(right);
+    
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       leftOutputEntry.setDouble(left);
       rightOutputEntry.setDouble(right);
     }
+  }
 
-    leftDrive.set(left);
-    rightDrive.set(right);
+  public void setIdleMode(IdleMode mode) {
+    leftDrive.setIdleMode(mode);
+    rightDrive.setIdleMode(mode);
+    // leftFollow.setIdleMode(mode);
+    // rightFollow.setIdleMode(mode);
   }
 }
