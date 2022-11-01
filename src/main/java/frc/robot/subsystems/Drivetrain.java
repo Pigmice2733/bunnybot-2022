@@ -56,8 +56,8 @@ public class Drivetrain extends SubsystemBase {
     // leftFollow.restoreFactoryDefaults();
     // rightFollow.restoreFactoryDefaults();
 
-    leftDrive.setInverted(true);
-    rightDrive.setInverted(false);
+    leftDrive.setInverted(false);
+    rightDrive.setInverted(true);
 
     leftDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
@@ -65,9 +65,9 @@ public class Drivetrain extends SubsystemBase {
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
     ShuffleboardLayout odometryLayout = driveTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
 
-    xPosEntry = odometryLayout.add("X", 0.0).getEntry();
-    yPosEntry = odometryLayout.add("Y", 0.0).getEntry();
-    headingEntry = odometryLayout.add("Heading", 0.0).getEntry();
+    xPosEntry = driveTab.add("X", 0.0).getEntry();
+    yPosEntry = driveTab.add("Y", 0.0).getEntry();
+    headingEntry = driveTab.add("Heading", 0.0).getEntry();
 
     leftOutputEntry = driveTab.add("Left Output", 0).getEntry();
     rightOutputEntry = driveTab.add("Right Output", 0).getEntry();
@@ -94,6 +94,9 @@ public class Drivetrain extends SubsystemBase {
   public Rotation2d getHeading() {
     return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
+  public double getHeadingDegrees() {
+    return gyro.getAngle();
+  }
 
   /** @return a DifferentialDriveWheelSpeeds object from the encoder velocities. */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -111,6 +114,10 @@ public class Drivetrain extends SubsystemBase {
   /** @return Distance moved by right wheel since encoder reset  */
   public double getRightDistance() {
     return rightDrive.getEncoder().getPosition();
+  }
+
+  public double getAverageDistance() {
+    return (getRightDistance()+getLeftDistance()) / 2;
   }
 
   /** @return Drivetrains FeedForward  */
@@ -164,8 +171,8 @@ public class Drivetrain extends SubsystemBase {
    * @param turn    turn speed (clockwise is positive)
    */
   public void arcadeDrive(double forward, double turn) {
-    double left = forward - turn;
-    double right = forward + turn;
+    double left = forward + turn;
+    double right = forward - turn;
 
     updateOutputs(left, right);
   }
@@ -175,8 +182,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOutputs(double left, double right) {
-    left = Math.max(Math.min(0.3, left), -0.3);
-    right = Math.max(Math.min(0.3, right), -0.3);
+    //left = Math.max(Math.min(0.3, left), -0.3);
+    //right = Math.max(Math.min(0.3, right), -0.3);
 
     leftDrive.set(left);
     rightDrive.set(right);

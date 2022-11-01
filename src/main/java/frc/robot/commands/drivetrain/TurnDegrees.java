@@ -5,18 +5,17 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveDistance extends PIDCommand {
+public class TurnDegrees extends PIDCommand {
   /** Creates a new DriveDistanceOld. */
-  public DriveDistance(Drivetrain drivetrain, double distance) {
+  public TurnDegrees(Drivetrain drivetrain, double rotation) {
     super(
-      new PIDController(0.3, 0.02, 0), 
-          drivetrain::getAverageDistance,
-          distance, 
-          (output) -> { drivetrain.arcadeDrive(output, 0); },
+      new PIDController(0.03, 0, 0), 
+          drivetrain::getHeadingDegrees,
+          rotation, 
+          (output) -> { drivetrain.arcadeDrive(0, output); },
           drivetrain
     );
     this.m_controller.setTolerance(0.05, 0.1);

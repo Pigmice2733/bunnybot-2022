@@ -21,7 +21,7 @@ public class Controls {
 
     public double getDriveSpeed() {
         double joystickValue = driver.getLeftY();
-        joystickValue = MathUtil.applyDeadband(joystickValue, threshold); // Deals with stick drag
+        joystickValue = MathUtil.applyDeadband(-joystickValue, threshold); // Deals with stick drag
 
         return joystickValue * DrivetrainConfig.driveSpeed;
     }

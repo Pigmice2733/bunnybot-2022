@@ -18,11 +18,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DriveDistanceNew;
+import frc.robot.commands.drivetrain.TurnDegrees;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.subsystems.Drivetrain;
@@ -126,30 +130,37 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return new DriveDistance(drivetrain, 10);
-    drivetrain.resetOdometry();
+    // drivetrain.resetOdometry();
 
-    TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
-        config.setKinematics(drivetrain.getKinematics());
+    // TrajectoryConfig config = new TrajectoryConfig(0.5, 2);
+    //     config.setKinematics(drivetrain.getKinematics());
 
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-            List.of(new Pose2d(), new Pose2d(3, 0, new Rotation2d(0))),
-            config
-            );
+    //     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //         List.of(new Pose2d(), new Pose2d(5, 0, new Rotation2d(Math.PI/2))),
+    //         config
+    //     );
+    //     System.out.println(trajectory.toString());
 
 
-        RamseteCommand command = new RamseteCommand(
-            trajectory,
-            drivetrain::getPose,
-            new RamseteController(DrivetrainConfig.kB, DrivetrainConfig.kZeta),
-            drivetrain.getFeedForward(),
-            drivetrain.getKinematics(),
-            drivetrain::getWheelSpeeds,
-            new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Left
-            new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Right
-            drivetrain::tankDriveVolts,
-            drivetrain
-        );
+    //     RamseteCommand command = new RamseteCommand(
+    //         trajectory,
+    //         drivetrain::getPose,
+    //         new RamseteController(DrivetrainConfig.kB, DrivetrainConfig.kZeta),
+    //         drivetrain.getFeedForward(),
+    //         drivetrain.getKinematics(),
+    //         drivetrain::getWheelSpeeds,
+    //         new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Left
+    //         new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Right
+    //         drivetrain::tankDriveVolts,
+    //         drivetrain
+    //     );
 
-        return command;
+    //     return command;
+        drivetrain.resetOdometry();
+        
+
+        //return new DriveDistanceOld(drivetrain, 2);
+        //return new DriveDistance(drivetrain, 2);
+        return new TurnDegrees(drivetrain, 90);
   }
 }
