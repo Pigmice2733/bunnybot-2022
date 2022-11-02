@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
@@ -29,16 +30,19 @@ public class DriveDistanceNew extends CommandBase {
             List.of(new Pose2d(), new Pose2d(distance, 0, new Rotation2d())),
             config
         );
+        
         followPathCommand = new FollowPath(drivetrain, trajectory);
         
         SmartDashboard.putBoolean("Command Done", false);
 
         addRequirements(drivetrain);
+
+        CommandScheduler.getInstance().schedule(followPathCommand);
     }
 
     @Override
     public boolean isFinished() {
-        SmartDashboard.putBoolean("Command Done", true);
+        SmartDashboard.putBoolean("Command Done", followPathCommand.isFinished());
         return followPathCommand.isFinished();
     }
 }

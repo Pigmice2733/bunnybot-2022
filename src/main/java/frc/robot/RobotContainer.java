@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -26,6 +27,7 @@ import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistanceNew;
+import frc.robot.commands.drivetrain.FollowPath;
 import frc.robot.commands.drivetrain.TurnDegrees;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.rake.RotateRakeAngle;
@@ -46,7 +48,7 @@ public class RobotContainer {
 
   private final Controls controls;
   private final Drivetrain drivetrain;
-  //private final Rake rake;
+  // private final Rake rake;
   // private final ScoopIntake scoop;
   // private final Conveyor conveyor;
 
@@ -58,7 +60,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     drivetrain = new Drivetrain();
-    //rake = new Rake();
+    // rake = new Rake();
     // scoop = new ScoopIntake();
     // conveyor = new Conveyor();
 
@@ -71,7 +73,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed));
 
-    //rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
+    // rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
     // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
@@ -89,38 +91,47 @@ public class RobotContainer {
      * .whenPressed(drivetrain::enable);
      */
 
-    /* new JoystickButton(driver, Button.kX.value)
-        .whenPressed(new RunScoop(scoop, () -> 0));
-    
-    new JoystickButton(driver, Button.kRightBumper.value)
-        .whenPressed(scoop::extend)
-        .whenReleased(scoop::stopExtend);
-    
-    new JoystickButton(driver, Button.kLeftBumper.value)
-        .whenPressed(scoop::retract)
-        .whenReleased(scoop::stopExtend); */
+    /*
+     * new JoystickButton(driver, Button.kX.value)
+     * .whenPressed(new RunScoop(scoop, () -> 0));
+     * 
+     * new JoystickButton(driver, Button.kRightBumper.value)
+     * .whenPressed(scoop::extend)
+     * .whenReleased(scoop::stopExtend);
+     * 
+     * new JoystickButton(driver, Button.kLeftBumper.value)
+     * .whenPressed(scoop::retract)
+     * .whenReleased(scoop::stopExtend);
+     */
     /*
      * new JoystickButton(driver, Button.kA.value)
      * .whenPressed(drivetrain::enable);
      */
 
-    /* new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
-    new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
-    new JoystickButton(driver, Button.kY.value).whenPressed(conveyor::ToggleDirection); */
+    /*
+     * new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
+     * new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
+     * new JoystickButton(driver,
+     * Button.kY.value).whenPressed(conveyor::ToggleDirection);
+     */
 
     // new JoystickButton(operator, Button.kA.value)
-    //     .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+    // .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
     // new JoystickButton(operator, Button.kB.value)
-    //     .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
+    // .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
     // new JoystickButton(operator, Button.kX.value)
-    //     .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+    // .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
     // new JoystickButton(operator, Button.kY.value)
-    //     .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+    // .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
 
     // new JoystickButton(operator, Button.kRightBumper.value)
-    //     .whenPressed(new InstantCommand(rake::toggleMode));
+    // .whenPressed(new InstantCommand(rake::toggleMode));
     // new JoystickButton(operator, Button.kLeftBumper.value)
-    //     .whenPressed(new InstantCommand(rake::toggleDisabled));
+    // .whenPressed(new InstantCommand(rake::toggleDisabled));
+    new JoystickButton(driver, Button.kRightBumper.value)
+        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
+    new JoystickButton(driver, Button.kLeftBumper.value)
+        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1)));
   }
 
   /**
@@ -129,38 +140,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return new DriveDistance(drivetrain, 10);
-    // drivetrain.resetOdometry();
+    drivetrain.resetOdometry();
 
-    // TrajectoryConfig config = new TrajectoryConfig(0.5, 2);
-    //     config.setKinematics(drivetrain.getKinematics());
+    TrajectoryConfig config = new TrajectoryConfig(1.7, 0.7);
+    config.setKinematics(drivetrain.getKinematics());
 
-    //     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-    //         List.of(new Pose2d(), new Pose2d(5, 0, new Rotation2d(Math.PI/2))),
-    //         config
-    //     );
-    //     System.out.println(trajectory.toString());
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        List.of(new Pose2d(), new Pose2d(2, -2, new Rotation2d(-45)), new Pose2d(2.5, 0, new Rotation2d(90))),
+        config);
 
-
-    //     RamseteCommand command = new RamseteCommand(
-    //         trajectory,
-    //         drivetrain::getPose,
-    //         new RamseteController(DrivetrainConfig.kB, DrivetrainConfig.kZeta),
-    //         drivetrain.getFeedForward(),
-    //         drivetrain.getKinematics(),
-    //         drivetrain::getWheelSpeeds,
-    //         new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Left
-    //         new PIDController(DrivetrainConfig.kP, DrivetrainConfig.kI, DrivetrainConfig.kD), // Right
-    //         drivetrain::tankDriveVolts,
-    //         drivetrain
-    //     );
-
-    //     return command;
-        drivetrain.resetOdometry();
-        
-
-        //return new DriveDistanceOld(drivetrain, 2);
-        //return new DriveDistance(drivetrain, 2);
-        return new TurnDegrees(drivetrain, 90);
+    return new FollowPath(drivetrain, trajectory);
   }
 }

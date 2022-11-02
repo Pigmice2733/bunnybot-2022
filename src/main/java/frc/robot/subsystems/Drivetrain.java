@@ -86,7 +86,7 @@ public class Drivetrain extends SubsystemBase {
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       xPosEntry.setDouble(pose.getX());
       yPosEntry.setDouble(pose.getY());
-      headingEntry.setDouble(pose.getRotation().getDegrees());
+      headingEntry.setDouble(getHeadingDegrees());
     }
   }
 
@@ -95,7 +95,7 @@ public class Drivetrain extends SubsystemBase {
     return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
   public double getHeadingDegrees() {
-    return gyro.getAngle();
+    return gyro.getAngle() + (gyro.getAngle() < 0 ? 360 : 0);
   }
 
   /** @return a DifferentialDriveWheelSpeeds object from the encoder velocities. */

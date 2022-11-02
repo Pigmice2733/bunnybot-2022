@@ -8,8 +8,6 @@ import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
 public class FollowPath extends RamseteCommand {
-    private Drivetrain drivetrain;
-
     public FollowPath(Drivetrain drivetrain, Trajectory trajectory) {
         super(
             trajectory,
@@ -24,17 +22,5 @@ public class FollowPath extends RamseteCommand {
             drivetrain
         );
         addRequirements(drivetrain);
-
-        this.drivetrain = drivetrain;
-    }
-
-    @Override
-    public void initialize() {
-        drivetrain.resetOdometry();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        drivetrain.tankDriveVolts(0.0, 0.0);
     }
 }
