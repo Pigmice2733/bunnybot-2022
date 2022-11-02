@@ -14,7 +14,6 @@ import frc.robot.subsystems.Rake;
 public class RotateRakeAngle extends PIDCommand {
   private final double errorThreshold = 0.05;
   private final double turnSpeedThreshold = 1.0;
-  // private final Rake rake;
 
   public RotateRakeAngle(double targetAngle, Rake rake) {
     super(
@@ -25,8 +24,6 @@ public class RotateRakeAngle extends PIDCommand {
         rake);
 
     getController().setTolerance(errorThreshold, turnSpeedThreshold);
-
-    // this.rake = rake;
   }
 
   public RotateRakeAngle(DoubleSupplier targetAngle, Rake rake) {

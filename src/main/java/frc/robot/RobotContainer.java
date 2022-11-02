@@ -4,32 +4,18 @@
 
 package frc.robot;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.DrivetrainConfig;
+
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
-import frc.robot.commands.drivetrain.DriveDistanceNew;
-import frc.robot.commands.drivetrain.FollowPath;
 import frc.robot.commands.drivetrain.TurnDegrees;
-import frc.robot.commands.drivetrain.DriveDistance;
+import frc.robot.commands.drivetrain.AutoRoutines.TestPath;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
@@ -42,39 +28,27 @@ import frc.robot.subsystems.Rake;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-
-  // private final Drivetrain drivetrain;
-
   private final Controls controls;
   private final Drivetrain drivetrain;
-  // private final Rake rake;
-  // private final ScoopIntake scoop;
-  // private final Conveyor conveyor;
+  private final Rake rake;
 
   private XboxController driver;
   private XboxController operator;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
   public RobotContainer() {
     drivetrain = new Drivetrain();
-    // rake = new Rake();
-    // scoop = new ScoopIntake();
-    // conveyor = new Conveyor();
+    rake = new Rake();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
     controls = new Controls(driver, operator);
 
     drivetrain.setDefaultCommand(new ArcadeDrive(
-        drivetrain,
-        controls::getDriveSpeed,
-        controls::getTurnSpeed));
+      drivetrain,
+      controls::getDriveSpeed,
+      controls::getTurnSpeed));
 
-    // rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
-    // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
+    rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
 
     configureButtonBindings(driver, operator);
   }
@@ -86,52 +60,38 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    /*
-     * new JoystickButton(driver, Button.kA.value)
-     * .whenPressed(drivetrain::enable);
-     */
 
-    /*
-     * new JoystickButton(driver, Button.kX.value)
-     * .whenPressed(new RunScoop(scoop, () -> 0));
-     * 
-     * new JoystickButton(driver, Button.kRightBumper.value)
-     * .whenPressed(scoop::extend)
-     * .whenReleased(scoop::stopExtend);
-     * 
-     * new JoystickButton(driver, Button.kLeftBumper.value)
-     * .whenPressed(scoop::retract)
-     * .whenReleased(scoop::stopExtend);
-     */
-    /*
-     * new JoystickButton(driver, Button.kA.value)
-     * .whenPressed(drivetrain::enable);
-     */
+    // OPERATOR CONTROLS
 
-    /*
-     * new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
-     * new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
-     * new JoystickButton(driver,
-     * Button.kY.value).whenPressed(conveyor::ToggleDirection);
-     */
+    // Rotate rake to preset positions
+    new JoystickButton(operator, Button.kA.value)
+      .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+    new JoystickButton(operator, Button.kB.value)
+      .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
+    new JoystickButton(operator, Button.kX.value)
+      .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+    new JoystickButton(operator, Button.kY.value)
+      .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
 
-    // new JoystickButton(operator, Button.kA.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
-    // new JoystickButton(operator, Button.kB.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
-    // new JoystickButton(operator, Button.kX.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
-    // new JoystickButton(operator, Button.kY.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+    // Toggle rake mode
+    new JoystickButton(operator, Button.kRightBumper.value)
+      .whenPressed(new InstantCommand(rake::toggleMode));
+    new JoystickButton(operator, Button.kLeftBumper.value)
+      .whenPressed(new InstantCommand(rake::toggleDisabled));
 
-    // new JoystickButton(operator, Button.kRightBumper.value)
-    // .whenPressed(new InstantCommand(rake::toggleMode));
-    // new JoystickButton(operator, Button.kLeftBumper.value)
-    // .whenPressed(new InstantCommand(rake::toggleDisabled));
+    // DRIVER CONTROLS
+
+    // Rotate 90 degrees with bumper press
     new JoystickButton(driver, Button.kRightBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
+      .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
     new JoystickButton(driver, Button.kLeftBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1)));
+      .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1)));
+  
+    // Slow mode
+    new JoystickButton(driver, Button.kY.value)
+      .whenPressed(new InstantCommand(drivetrain::enableSlow))
+      .whenReleased(new InstantCommand(drivetrain::disableSlow));
+
   }
 
   /**
@@ -140,15 +100,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    drivetrain.resetOdometry();
-
-    TrajectoryConfig config = new TrajectoryConfig(1.7, 0.7);
-    config.setKinematics(drivetrain.getKinematics());
-
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        List.of(new Pose2d(), new Pose2d(2, -2, new Rotation2d(-45)), new Pose2d(2.5, 0, new Rotation2d(90))),
-        config);
-
-    return new FollowPath(drivetrain, trajectory);
+    return new TestPath(drivetrain);
   }
 }

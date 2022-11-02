@@ -9,23 +9,18 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDlights extends SubsystemBase {
-  private AddressableLED lights;
-  private AddressableLEDBuffer lightss;
+  private AddressableLED lights = new AddressableLED(0);
+  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(0);
+
   /** Creates a new LEDlights. */
-  public LEDlights() 
-  {
-    lights = new AddressableLED(0);
-    lightss = new AddressableLEDBuffer(0);
-    lights.setData(lightss);
+  public LEDlights() {
+    lights.setData(buffer);
     lights.start();
   }
-  private void setColor(int hue){
-    for(int i = 0;i < lightss.getLength();i++){
-      lightss.setHSV(i, hue, 255, 128);
+
+  public void setColor(int hue) {
+    for (int i = 0; i < buffer.getLength(); i++) {
+      buffer.setHSV(i, hue, 255, 128);
     }
-  }
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

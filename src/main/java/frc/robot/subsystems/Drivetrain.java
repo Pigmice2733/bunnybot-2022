@@ -45,7 +45,10 @@ public class Drivetrain extends SubsystemBase {
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConfig.kS, DrivetrainConfig.kV,
       DrivetrainConfig.kA);
 
-  private Pose2d pose;
+  private Pose2d pose = new Pose2d();
+
+  private boolean slowEnabled = false;
+  public double speedFactor = 1;
 
   public Drivetrain() {
     // leftFollow.follow(leftDrive);
@@ -79,9 +82,17 @@ public class Drivetrain extends SubsystemBase {
     updateOdometry();
   }
 
+  public void setSlow(boolean slowEnabled) { 
+    this.slowEnabled = slowEnabled; 
+    speedFactor = slowEnabled ? DrivetrainConfig.slowMultiplier : 1; 
+  }
+  public void enableSlow() { setSlow(true); }
+  public void disableSlow() { setSlow(false); }
+  public void toggleSlow() { setSlow(!this.slowEnabled); }
+
   /** Updates the odometry pose with the heading and position measurements. */
   private void updateOdometry() {
-    pose = odometry.update(getHeading(), getLeftDistance(), getRightDistance());
+    pose = odometry.update(getHeading(), leftDrive.getEncoder().getPosition(), rightDrive.getEncoder().getPosition());
 
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       xPosEntry.setDouble(pose.getX());
@@ -90,10 +101,12 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  /** @return Current robot rotaiton since last reset */
+  /** @return Current robot rotaiton since last reset in radians */
   public Rotation2d getHeading() {
     return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
+
+  /** @return Current robot rotation since last reset in degrees scaled between 0 and 360 */
   public double getHeadingDegrees() {
     return gyro.getAngle() + (gyro.getAngle() < 0 ? 360 : 0);
   }
@@ -106,18 +119,9 @@ public class Drivetrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(left, right);
   }
 
-  /** @return Distance moved by left wheel since encoder reset  */
-  public double getLeftDistance() {
-    return leftDrive.getEncoder().getPosition();
-  }
-
-  /** @return Distance moved by right wheel since encoder reset  */
-  public double getRightDistance() {
-    return rightDrive.getEncoder().getPosition();
-  }
-
+ /** @return Average position moved by left and right wheels since last reset */
   public double getAverageDistance() {
-    return (getRightDistance()+getLeftDistance()) / 2;
+    return (leftDrive.getEncoder().getPosition() + rightDrive.getEncoder().getPosition()) / 2;
   }
 
   /** @return Drivetrains FeedForward  */
@@ -174,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
     double left = forward + turn;
     double right = forward - turn;
 
-    updateOutputs(left, right);
+    updateOutputs(left * speedFactor, right);
   }
 
   public void stop() {
@@ -182,8 +186,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOutputs(double left, double right) {
-    //left = Math.max(Math.min(0.3, left), -0.3);
-    //right = Math.max(Math.min(0.3, right), -0.3);
+    // Clamp outputs (to make sure drivetrain does not go crazy during auto)
+    double clampValue = 1;
+    left = Math.max(Math.min(clampValue, left), -clampValue);
+    right = Math.max(Math.min(clampValue, right), -clampValue);
 
     leftDrive.set(left);
     rightDrive.set(right);
