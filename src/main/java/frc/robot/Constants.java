@@ -70,11 +70,10 @@ public final class Constants {
   public final static class RakeConfig {
     public static enum RakeMode {
       Automatic,
-      Manual,
-      Disabled
+      Manual
     }
 
-    public static final int leftMotorID = 2;
+    public static final int leftMotorID = 60;
     public static final int rightMotorID = 0;
     public static final double motorSpeed = 1;
 

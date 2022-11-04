@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -31,6 +32,7 @@ import frc.robot.commands.drivetrain.FollowPath;
 import frc.robot.commands.drivetrain.TurnDegrees;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.rake.RotateRakeAngle;
+import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
 
@@ -47,8 +49,8 @@ public class RobotContainer {
   // private final Drivetrain drivetrain;
 
   private final Controls controls;
-  private final Drivetrain drivetrain;
-  // private final Rake rake;
+  // private final Drivetrain drivetrain;
+  private final Rake rake;
   // private final ScoopIntake scoop;
   // private final Conveyor conveyor;
 
@@ -59,8 +61,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    drivetrain = new Drivetrain();
-    // rake = new Rake();
+    // drivetrain = new Drivetrain();
+    rake = new Rake();
     // scoop = new ScoopIntake();
     // conveyor = new Conveyor();
 
@@ -68,12 +70,13 @@ public class RobotContainer {
     operator = new XboxController(1);
     controls = new Controls(driver, operator);
 
-    drivetrain.setDefaultCommand(new ArcadeDrive(
+    /* drivetrain.setDefaultCommand(new ArcadeDrive(
         drivetrain,
         controls::getDriveSpeed,
-        controls::getTurnSpeed));
+        controls::getTurnSpeed)); */
 
     // rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
+    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
     // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
@@ -115,23 +118,24 @@ public class RobotContainer {
      * Button.kY.value).whenPressed(conveyor::ToggleDirection);
      */
 
-    // new JoystickButton(operator, Button.kA.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
-    // new JoystickButton(operator, Button.kB.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
-    // new JoystickButton(operator, Button.kX.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
-    // new JoystickButton(operator, Button.kY.value)
-    // .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+    new JoystickButton(operator, Button.kA.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+    new JoystickButton(operator, Button.kB.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
+    new JoystickButton(operator, Button.kX.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+    new JoystickButton(operator, Button.kY.value)
+        .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
 
-    // new JoystickButton(operator, Button.kRightBumper.value)
-    // .whenPressed(new InstantCommand(rake::toggleMode));
-    // new JoystickButton(operator, Button.kLeftBumper.value)
-    // .whenPressed(new InstantCommand(rake::toggleDisabled));
-    new JoystickButton(driver, Button.kRightBumper.value)
+    new JoystickButton(operator, Button.kRightBumper.value)
+        .whenPressed(rake::toggleMode);
+    new JoystickButton(operator, Button.kLeftBumper.value)
+        .whenPressed(rake::toggleDisabled);
+
+    /* new JoystickButton(driver, Button.kRightBumper.value)
         .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
     new JoystickButton(driver, Button.kLeftBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1)));
+        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1))); */
   }
 
   /**
@@ -140,15 +144,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    drivetrain.resetOdometry();
-
+    /* drivetrain.resetOdometry();
+    
     TrajectoryConfig config = new TrajectoryConfig(1.7, 0.7);
     config.setKinematics(drivetrain.getKinematics());
-
+    
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         List.of(new Pose2d(), new Pose2d(2, -2, new Rotation2d(-45)), new Pose2d(2.5, 0, new Rotation2d(90))),
         config);
-
-    return new FollowPath(drivetrain, trajectory);
+    
+    return new FollowPath(drivetrain, trajectory); */
+    return null;
   }
 }

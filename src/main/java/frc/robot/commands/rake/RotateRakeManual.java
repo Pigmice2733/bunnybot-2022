@@ -13,6 +13,8 @@ public class RotateRakeManual extends CommandBase {
   public RotateRakeManual(DoubleSupplier speed, Rake rake) {
     this.rake = rake;
     this.speed = speed;
+
+    addRequirements(rake);
   }
 
   @Override

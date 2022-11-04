@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -16,32 +18,42 @@ import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
 
 public class Rake extends SubsystemBase {
-  private final TalonSRX leftMotor;
-  private final TalonSRX rightMotor;
+  private final CANSparkMax leftMotor;
+  private final CANSparkMax rightMotor;
   private double angle;
 
-  private RakeMode mode = RakeMode.Manual;
-  private RakeMode prevMode;
+  private RakeMode mode;
+  private boolean disabled;
 
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry angleEntry;
+  private final NetworkTableEntry modeEntry;
 
   /** Creates a new Rake. */
   public Rake() {
-    leftMotor = new TalonSRX(RakeConfig.leftMotorID);
-    rightMotor = new TalonSRX(RakeConfig.rightMotorID);
+    leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
+    rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
+
+    // sets encoders to report in degrees
+    leftMotor.getEncoder().setPositionConversionFactor(360);
+    rightMotor.getEncoder().setPositionConversionFactor(360);
+
+    leftMotor.restoreFactoryDefaults();
+    rightMotor.restoreFactoryDefaults();
 
     angle = RakeConfig.startAngle;
+    mode = RakeMode.Manual;
 
     rakeTab = Shuffleboard.getTab("Rake");
     angleEntry = rakeTab.add("Angle", angle).getEntry();
+    modeEntry = rakeTab.add("Mode", "manual").getEntry();
   }
 
   @Override
   public void periodic() {
     updateAngle();
 
-    if (mode == RakeMode.Disabled)
+    if (disabled)
       setMotorSpeeds(0);
   }
 
@@ -56,13 +68,13 @@ public class Rake extends SubsystemBase {
   }
 
   void setMotorSpeeds(double speed) {
-    leftMotor.set(ControlMode.PercentOutput, speed);
-    rightMotor.set(ControlMode.PercentOutput, speed);
+    leftMotor.set(speed);
+    // rightMotor.set(speed);
   }
 
   public void updateAngle() {
-    this.angle = (leftMotor.getSelectedSensorPosition() + rightMotor.getSelectedSensorPosition())
-        * 360 / (4096 * 2); // average angle for two motors (should be the same anyway)
+    // average angle for two motors (should be the same anyway)
+    this.angle = (leftMotor.getEncoder().getPosition() + rightMotor.getEncoder().getPosition()) / 2;
 
     if (ShuffleboardConfig.rakePrintsEnabled)
       angleEntry.setDouble(angle);
@@ -73,8 +85,15 @@ public class Rake extends SubsystemBase {
   }
 
   public void setMode(RakeMode mode) {
-    prevMode = this.mode;
     this.mode = mode;
+
+    if (ShuffleboardConfig.rakePrintsEnabled) {
+      if (this.disabled) {
+        modeEntry.setString("disabled");
+      } else {
+        modeEntry.setString(mode == RakeMode.Automatic ? "automatic" : "manual");
+      }
+    }
   }
 
   public void toggleMode() {
@@ -87,10 +106,8 @@ public class Rake extends SubsystemBase {
   }
 
   public void toggleDisabled() {
-    if (this.mode == RakeMode.Disabled) {
-      setMode(prevMode);
-    } else {
-      setMode(RakeMode.Disabled);
-    }
+    this.disabled = !this.disabled;
+
+    modeEntry.setString("disabled");
   }
 }
