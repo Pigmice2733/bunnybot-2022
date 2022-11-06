@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveDistance extends PIDCommand {
+  private Drivetrain drivetrain;
+  private double distance;
 
   public DriveDistance(Drivetrain drivetrain, double distance) {
     super(
@@ -21,7 +23,14 @@ public class DriveDistance extends PIDCommand {
     this.m_controller.setTolerance(0.05, 0.1);
 
     addRequirements(drivetrain);
-    drivetrain.resetOdometry();
+
+    this.drivetrain = drivetrain;
+    this.distance = distance;
+  }
+
+  @Override
+  public void initialize() {
+    getController().setSetpoint((distance + drivetrain.getAverageDistance()));
   }
 
   @Override

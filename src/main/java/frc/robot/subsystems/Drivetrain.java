@@ -186,7 +186,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void updateOutputs(double left, double right) {
-    // Clamp outputs (to make sure drivetrain does not go crazy during auto)
+    // Clamp outputs FOR TESTING (to make sure drivetrain does not go crazy while testing auto commands)
+    // WILL BE REMOVED FOR COMP
     double clampValue = 1;
     left = Math.max(Math.min(clampValue, left), -clampValue);
     right = Math.max(Math.min(clampValue, right), -clampValue);

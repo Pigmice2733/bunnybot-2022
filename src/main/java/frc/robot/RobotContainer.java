@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.drivetrain.AutoRoutines.AutoDispense;
 import frc.robot.commands.drivetrain.AutoRoutines.TestPath;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.subsystems.Drivetrain;
@@ -29,15 +30,15 @@ import frc.robot.subsystems.Rake;
  */
 public class RobotContainer {
   private final Controls controls;
-  private final Drivetrain drivetrain;
-  private final Rake rake;
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final Rake rake = new Rake();
 
   private XboxController driver;
   private XboxController operator;
 
+  private AutoDispense autoDispense = new AutoDispense(drivetrain);
+
   public RobotContainer() {
-    drivetrain = new Drivetrain();
-    rake = new Rake();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -86,6 +87,11 @@ public class RobotContainer {
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
     new JoystickButton(driver, Button.kLeftBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1)));
+
+    // Start auto dispense
+    new JoystickButton(driver, Button.kX.value)
+      .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
+      .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
   
     // Slow mode
     new JoystickButton(driver, Button.kY.value)
