@@ -32,7 +32,7 @@ import frc.robot.subsystems.Rake;
  */
 public class RobotContainer {
   private final Controls controls;
-  // private final Drivetrain drivetrain;
+  //private final Drivetrain drivetrain;
   private final Rake rake;
   // private final ScoopIntake scoop;
   // private final Conveyor conveyor;
@@ -40,7 +40,7 @@ public class RobotContainer {
   private XboxController driver;
   private XboxController operator;
 
-  private AutoDispense autoDispense = new AutoDispense(drivetrain);
+  //private AutoDispense autoDispense = new AutoDispense(drivetrain);
 
   public RobotContainer() {
     // drivetrain = new Drivetrain();
@@ -71,35 +71,7 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    /*
-     * new JoystickButton(driver, Button.kA.value)
-     * .whenPressed(drivetrain::enable);
-     */
-
-    /*
-     * new JoystickButton(driver, Button.kX.value)
-     * .whenPressed(new RunScoop(scoop, () -> 0));
-     * 
-     * new JoystickButton(driver, Button.kRightBumper.value)
-     * .whenPressed(scoop::extend)
-     * .whenReleased(scoop::stopExtend);
-     * 
-     * new JoystickButton(driver, Button.kLeftBumper.value)
-     * .whenPressed(scoop::retract)
-     * .whenReleased(scoop::stopExtend);
-     */
-    /*
-     * new JoystickButton(driver, Button.kA.value)
-     * .whenPressed(drivetrain::enable);
-     */
-
-    /*
-     * new JoystickButton(driver, Button.kA.value).whenPressed(conveyor::Enable);
-     * new JoystickButton(driver, Button.kB.value).whenPressed(conveyor::Disable);
-     * new JoystickButton(driver,
-     * Button.kY.value).whenPressed(conveyor::ToggleDirection);
-     */
-
+    // Rake preset angles
     new JoystickButton(operator, Button.kA.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
     new JoystickButton(operator, Button.kB.value)
@@ -109,15 +81,22 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
 
+    // Toggle rake mode
     new JoystickButton(operator, Button.kRightBumper.value)
         .whenPressed(rake::toggleMode);
     new JoystickButton(operator, Button.kLeftBumper.value)
         .whenPressed(rake::toggleDisabled);
 
+    // Auto turn 90 degrees
     /* new JoystickButton(driver, Button.kRightBumper.value)
         .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
     new JoystickButton(driver, Button.kLeftBumper.value)
         .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1))); */
+
+    // Auto dispense (hold, release to cancel)
+    // new JoystickButton(driver, Button.kX.value)
+    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
+    //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
   }
 
   /**

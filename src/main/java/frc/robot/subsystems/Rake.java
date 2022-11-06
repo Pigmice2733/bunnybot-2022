@@ -20,14 +20,14 @@ import frc.robot.Constants.RakeConfig.RakeMode;
 public class Rake extends SubsystemBase {
   private final CANSparkMax leftMotor;
   private final CANSparkMax rightMotor;
-  private double angle;
-
-  private RakeMode mode;
-  private boolean disabled;
 
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry angleEntry;
   private final NetworkTableEntry modeEntry;
+
+  private RakeMode mode;
+  private boolean disabled;
+  private double angle;
 
   /** Creates a new Rake. */
   public Rake() {

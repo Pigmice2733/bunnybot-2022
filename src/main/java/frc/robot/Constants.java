@@ -47,6 +47,7 @@ public final class Constants {
       Manual
     }
 
+    public static final double gearRatio = 1 / 1;
     public static final int leftMotorID = 60;
     public static final int rightMotorID = 0;
     public static final double motorSpeed = 1;
