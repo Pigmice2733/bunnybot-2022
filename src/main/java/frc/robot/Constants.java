@@ -27,9 +27,19 @@ public final class Constants {
 
     // Path following PID
     //public static final double kP = 4.3789; <- value from SysId
-    public static final double kP = -0.0002;
-    public static final double kI = 0;
-    public static final double kD = 0;
+    public static final double pathP = -0.0002;
+    public static final double pathI = 0;
+    public static final double pathD = 0;
+
+    // Drive distance PID
+    public static final double driveDistP = 0.3;
+    public static final double driveDistI = 0;
+    public static final double driveDistD = 0;
+
+    // Auto turn PID
+    public static final double turnP = 0.006;
+    public static final double turnI = 0;
+    public static final double turnD = 0.0001;
 
     // Drivetrain characterization (Do not change, found using SysId)
     public static final double kS = 0.17247;

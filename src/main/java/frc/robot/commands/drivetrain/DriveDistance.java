@@ -6,6 +6,7 @@ package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveDistance extends PIDCommand {
@@ -14,11 +15,11 @@ public class DriveDistance extends PIDCommand {
 
   public DriveDistance(Drivetrain drivetrain, double distance) {
     super(
-      new PIDController(0.3, 0.02, 0), 
-          drivetrain::getAverageDistance,
-          distance, 
-          (output) -> { drivetrain.arcadeDrive(output, 0); },
-          drivetrain
+      new PIDController(DrivetrainConfig.driveDistP, DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD), 
+        drivetrain::getAverageDistance,
+        distance, 
+        (output) -> { drivetrain.arcadeDrive(output, 0); },
+        drivetrain
     );
     this.m_controller.setTolerance(0.05, 0.1);
 

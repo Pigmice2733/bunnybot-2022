@@ -2,6 +2,7 @@ package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
 public class TurnDegrees extends PIDCommand { 
@@ -10,11 +11,11 @@ public class TurnDegrees extends PIDCommand {
 
   public TurnDegrees(Drivetrain drivetrain, double rotation) {
     super(
-      new PIDController(0.006, 0, 0.0001), 
-          drivetrain::getHeadingDegrees,
-          (rotation + drivetrain.getHeadingDegrees()) % 360, 
-          (output) -> { drivetrain.arcadeDrive(0, output); },
-          drivetrain
+      new PIDController(DrivetrainConfig.turnP, DrivetrainConfig.turnI, DrivetrainConfig.turnD), 
+        drivetrain::getHeadingDegrees,
+        (rotation + drivetrain.getHeadingDegrees()) % 360, 
+        (output) -> { drivetrain.arcadeDrive(0, output); },
+        drivetrain
     );
     this.m_controller.setTolerance(3, 0.1);
     this.m_controller.enableContinuousInput(0, 360);
