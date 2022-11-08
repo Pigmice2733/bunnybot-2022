@@ -4,110 +4,116 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
 
 public class Rake extends SubsystemBase {
-  private final CANSparkMax leftMotor;
-  private final CANSparkMax rightMotor;
+  private final CANSparkMax leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
+  private final CANSparkMax rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
+
+  private final PIDController leftController = new PIDController(RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
+  private final PIDController rightController = new PIDController(RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
 
   private final ShuffleboardTab rakeTab;
-  private final NetworkTableEntry angleEntry;
-  private final NetworkTableEntry modeEntry;
+  private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry;
 
-  private RakeMode mode;
-  private boolean disabled;
-  private double angle;
+  private RakeMode mode = RakeMode.Manual;
 
-  /** Creates a new Rake. */
   public Rake() {
-    leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
-    rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
+    leftMotor.restoreFactoryDefaults();
+    rightMotor.restoreFactoryDefaults();
 
     // sets encoders to report in degrees
-    leftMotor.getEncoder().setPositionConversionFactor(360);
-    rightMotor.getEncoder().setPositionConversionFactor(360);
+    leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
+    rightMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
 
     leftMotor.restoreFactoryDefaults();
     rightMotor.restoreFactoryDefaults();
 
-    angle = RakeConfig.startAngle;
-    mode = RakeMode.Manual;
+    leftController.setSetpoint(RakeConfig.startAngle);
+    rightController.setSetpoint(RakeConfig.startAngle);
 
     rakeTab = Shuffleboard.getTab("Rake");
-    angleEntry = rakeTab.add("Angle", angle).getEntry();
-    modeEntry = rakeTab.add("Mode", "manual").getEntry();
+    targetAngleEntry = rakeTab.add("Target Angle", RakeConfig.startAngle).getEntry();
+    leftAngleEntry = rakeTab.add("Left Angle", RakeConfig.startAngle).getEntry();
+    rightAngleEntry = rakeTab.add("Right Angle", RakeConfig.startAngle).getEntry();
+    leftOutputEntry = rakeTab.add("Left Output", 0).getEntry();
+    rightOutputEntry = rakeTab.add("Right Output", 0).getEntry();
+    modeEntry = rakeTab.add("Mode", mode.toString()).getEntry();
   }
 
   @Override
   public void periodic() {
-    updateAngle();
+    if (mode == RakeMode.Automatic) 
+      evaluateControllers();
 
-    if (disabled)
-      setMotorSpeeds(0);
+    if (ShuffleboardConfig.rakePrintsEnabled) 
+      updateShuffleboard();
   }
 
-  public void setSpeedManual(double speed) {
+  private void evaluateControllers() {
+    double leftPos = leftMotor.getEncoder().getPosition();
+    double rightPos = rightMotor.getEncoder().getPosition();
+
+    setOutputs(leftController.calculate(leftPos), rightController.calculate(rightPos));
+  }
+
+  private void updateShuffleboard() {
+    targetAngleEntry.setDouble(leftController.getSetpoint());
+    leftAngleEntry.setDouble(leftMotor.getEncoder().getPosition());
+    rightAngleEntry.setDouble(rightMotor.getEncoder().getPosition());
+  }
+
+  public void manualDrive(double left, double right) {
+    // Enable rake when trigger is pressed a certain amount
+    if (left > 0.1 || right > 0.1)
+      setMode(RakeMode.Manual);
+
     if (mode == RakeMode.Manual)
-      setMotorSpeeds(speed);
+      setOutputs(left, right);
+  }
+  public void manualDrive(double speed) { manualDrive(speed, speed); }
+
+  private void setOutputs(double left, double right) {
+    leftMotor.set(left);
+    rightMotor.set(right);
+
+    if (ShuffleboardConfig.rakePrintsEnabled) {
+      leftOutputEntry.setDouble(left);
+      rightOutputEntry.setDouble(right);
+    }
   }
 
-  public void setSpeedAuto(double speed) {
-    if (mode == RakeMode.Automatic)
-      setMotorSpeeds(speed);
-  }
+  public void setSetpoint(double setpoint) {
+    // Set to automatic mode when auto rotate button is pressed
+    setMode(RakeMode.Automatic);
 
-  void setMotorSpeeds(double speed) {
-    leftMotor.set(speed);
-    // rightMotor.set(speed);
-  }
-
-  public void updateAngle() {
-    // average angle for two motors (should be the same anyway)
-    this.angle = (leftMotor.getEncoder().getPosition() + rightMotor.getEncoder().getPosition()) / 2;
-
-    if (ShuffleboardConfig.rakePrintsEnabled)
-      angleEntry.setDouble(angle);
-  }
-
-  public double getAngle() {
-    return this.angle;
+    leftController.setSetpoint(setpoint);
+    rightController.setSetpoint(setpoint);
   }
 
   public void setMode(RakeMode mode) {
     this.mode = mode;
 
-    if (ShuffleboardConfig.rakePrintsEnabled) {
-      if (this.disabled) {
-        modeEntry.setString("disabled");
-      } else {
-        modeEntry.setString(mode == RakeMode.Automatic ? "automatic" : "manual");
-      }
-    }
+    if (ShuffleboardConfig.rakePrintsEnabled)
+      modeEntry.setString(mode.toString());
   }
 
   public void toggleMode() {
-    if (this.mode == RakeMode.Automatic) {
+    if (this.mode == RakeMode.Automatic)
       setMode(RakeMode.Manual);
-    }
-    if (this.mode == RakeMode.Manual) {
+
+    if (this.mode == RakeMode.Manual)
       setMode(RakeMode.Automatic);
-    }
-  }
-
-  public void toggleDisabled() {
-    this.disabled = !this.disabled;
-
-    modeEntry.setString("disabled");
   }
 }

@@ -14,13 +14,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.RakeConfig;
+import frc.robot.commands.AutoRoutines.AutoDispense;
+import frc.robot.commands.AutoRoutines.DriveAndDispense;
+import frc.robot.commands.AutoRoutines.TestPath;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.TurnDegrees;
-import frc.robot.commands.drivetrain.AutoRoutines.AutoDispense;
-import frc.robot.commands.drivetrain.AutoRoutines.TestPath;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.RakeOld;
 import frc.robot.subsystems.Rake;
 
 /**
@@ -34,8 +36,6 @@ public class RobotContainer {
   private final Controls controls;
   //private final Drivetrain drivetrain;
   private final Rake rake;
-  // private final ScoopIntake scoop;
-  // private final Conveyor conveyor;
 
   private XboxController driver;
   private XboxController operator;
@@ -45,8 +45,6 @@ public class RobotContainer {
   public RobotContainer() {
     // drivetrain = new Drivetrain();
     rake = new Rake();
-    // scoop = new ScoopIntake();
-    // conveyor = new Conveyor();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -57,9 +55,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed)); */
 
-    // rake.setDefaultCommand(new RotateRakeAngle(rake::getAngle, rake));
     rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
-    // scoop.setDefaultCommand(new RunScoop(scoop, () -> ScoopConfig.motorSpeed));
 
     configureButtonBindings(driver, operator);
   }
@@ -71,30 +67,30 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    // Rake preset angles
+    // Rake preset angles (automatically switches )
     new JoystickButton(operator, Button.kA.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.intakeAngle, rake));
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
     new JoystickButton(operator, Button.kB.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.raiseAngle, rake));
-    new JoystickButton(operator, Button.kX.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.startAngle, rake));
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
     new JoystickButton(operator, Button.kY.value)
-        .whenPressed(new RotateRakeAngle(RakeConfig.dispenseAngle, rake));
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+    new JoystickButton(operator, Button.kX.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
 
     // Toggle rake mode
-    new JoystickButton(operator, Button.kRightBumper.value)
-        .whenPressed(rake::toggleMode);
-    new JoystickButton(operator, Button.kLeftBumper.value)
-        .whenPressed(rake::toggleDisabled);
+    // new JoystickButton(operator, Button.kRightBumper.value)
+    //     .whenPressed(rake::toggleMode);
+    // new JoystickButton(operator, Button.kLeftBumper.value)
+    //     .whenPressed(rake::toggleDisabled);
 
     // Auto turn 90 degrees
     /* new JoystickButton(driver, Button.kRightBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(1)));
+        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
     new JoystickButton(driver, Button.kLeftBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -90).withTimeout(1))); */
+        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); */
 
     // Auto dispense (hold, release to cancel)
-    // new JoystickButton(driver, Button.kX.value)
+    // new JoystickButton(operator, Button.kBack.value)
     //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
     //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
   }

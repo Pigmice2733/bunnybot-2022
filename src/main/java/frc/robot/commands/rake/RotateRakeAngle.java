@@ -9,13 +9,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 
-import frc.robot.subsystems.Rake;
+import frc.robot.subsystems.RakeOld;
 
 public class RotateRakeAngle extends PIDCommand {
   private final double errorThreshold = 0.05;
   private final double turnSpeedThreshold = 1.0;
 
-  public RotateRakeAngle(double targetAngle, Rake rake) {
+  public RotateRakeAngle(double targetAngle, RakeOld rake) {
     super(
         new PIDController(0.1, 0.02, 0.0),
         rake::getAngle,
@@ -26,7 +26,7 @@ public class RotateRakeAngle extends PIDCommand {
     getController().setTolerance(errorThreshold, turnSpeedThreshold);
   }
 
-  public RotateRakeAngle(DoubleSupplier targetAngle, Rake rake) {
+  public RotateRakeAngle(DoubleSupplier targetAngle, RakeOld rake) {
     this(targetAngle.getAsDouble(), rake);
   }
 

@@ -19,7 +19,7 @@ public class RotateRakeManual extends CommandBase {
 
   @Override
   public void execute() {
-    rake.setSpeedManual(speed.getAsDouble());
+    rake.manualDrive(speed.getAsDouble());
   }
 
   @Override
