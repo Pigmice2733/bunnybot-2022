@@ -21,11 +21,14 @@ public class Rake extends SubsystemBase {
   private final CANSparkMax leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
   private final CANSparkMax rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
 
-  private final PIDController leftController = new PIDController(RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
-  private final PIDController rightController = new PIDController(RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
+  private final PIDController leftController = new PIDController(
+      RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
+  private final PIDController rightController = new PIDController(
+      RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
 
   private final ShuffleboardTab rakeTab;
-  private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry;
+  private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry,
+      rightOutputEntry, modeEntry;
 
   private RakeMode mode = RakeMode.Manual;
 
@@ -36,9 +39,6 @@ public class Rake extends SubsystemBase {
     // sets encoders to report in degrees
     leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
     rightMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
-
-    leftMotor.restoreFactoryDefaults();
-    rightMotor.restoreFactoryDefaults();
 
     leftController.setSetpoint(RakeConfig.startAngle);
     rightController.setSetpoint(RakeConfig.startAngle);
@@ -54,10 +54,10 @@ public class Rake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (mode == RakeMode.Automatic) 
+    if (mode == RakeMode.Automatic)
       evaluateControllers();
 
-    if (ShuffleboardConfig.rakePrintsEnabled) 
+    if (ShuffleboardConfig.rakePrintsEnabled)
       updateShuffleboard();
   }
 
@@ -66,10 +66,11 @@ public class Rake extends SubsystemBase {
     double rightPos = rightMotor.getEncoder().getPosition();
 
     setOutputs(leftController.calculate(leftPos), rightController.calculate(rightPos));
+    setOutputs(0, rightController.calculate(rightPos));
   }
 
   private void updateShuffleboard() {
-    targetAngleEntry.setDouble(leftController.getSetpoint());
+    targetAngleEntry.setDouble(rightController.getSetpoint());
     leftAngleEntry.setDouble(leftMotor.getEncoder().getPosition());
     rightAngleEntry.setDouble(rightMotor.getEncoder().getPosition());
   }
@@ -82,7 +83,10 @@ public class Rake extends SubsystemBase {
     if (mode == RakeMode.Manual)
       setOutputs(left, right);
   }
-  public void manualDrive(double speed) { manualDrive(speed, speed); }
+
+  public void manualDrive(double speed) {
+    manualDrive(speed, speed);
+  }
 
   private void setOutputs(double left, double right) {
     leftMotor.set(left);

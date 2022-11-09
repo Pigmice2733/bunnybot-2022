@@ -35,7 +35,9 @@ import frc.robot.subsystems.Rake;
 public class RobotContainer {
   private final Controls controls;
   //private final Drivetrain drivetrain;
-  private final Rake rake;
+  // private final Rake rake;
+
+  private final AutonomousChooser chooser;
 
   private XboxController driver;
   private XboxController operator;
@@ -44,7 +46,9 @@ public class RobotContainer {
 
   public RobotContainer() {
     // drivetrain = new Drivetrain();
-    rake = new Rake();
+    // rake = new Rake();
+
+    chooser = new AutonomousChooser();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -55,7 +59,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed)); */
 
-    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    // rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
 
     configureButtonBindings(driver, operator);
   }
@@ -68,14 +72,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
     // Rake preset angles (automatically switches )
-    new JoystickButton(operator, Button.kA.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+    /* new JoystickButton(operator, Button.kA.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.intakeAngle));
     new JoystickButton(operator, Button.kB.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
     new JoystickButton(operator, Button.kX.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle)); */
 
     // Toggle rake mode
     // new JoystickButton(operator, Button.kRightBumper.value)
@@ -111,6 +115,6 @@ public class RobotContainer {
         config);
     
     return new FollowPath(drivetrain, trajectory); */
-    return null;
+    return chooser.chooser.getSelected();
   }
 }

@@ -8,7 +8,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public final static class DrivetrainConfig {
+  public final static class DrivetrainConfig {
     public static final int leftDrivePort = 2;
     public static final int rightDrivePort = 4;
     public static final int leftFollowPort = 0;
@@ -58,8 +58,8 @@ public final class Constants {
     }
 
     public static final double gearRatio = 1 / 1;
-    public static final int leftMotorID = 60;
-    public static final int rightMotorID = 0;
+    public static final int leftMotorID = 0;
+    public static final int rightMotorID = 60;
     public static final double motorSpeed = 1;
 
     // Preset rake angles (degrees)
@@ -68,9 +68,9 @@ public final class Constants {
     public static final double dispenseAngle = 125;
     public static final double intakeAngle = 0;
 
-    public static final double kP = 0.1;
-    public static final double kI = 0.02;
-    public static final double kD = 0;
+    public static final double kP = 0.0005;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
   }
 
   public final static class ShuffleboardConfig {

@@ -16,10 +16,9 @@ public class AutoDispense extends SequentialCommandGroup {
   /** Creates a new AutoDispense. */
   public AutoDispense(Drivetrain drivetrain, Rake rake) {
     addCommands(
-      new DriveDistance(drivetrain, -0.5).withTimeout(2),
-      new TurnDegrees(drivetrain, 180),
-      new DriveDistance(drivetrain, 1).withTimeout(2),
-      new InstantCommand(() -> rake.setSetpoint(RakeConfig.dispenseAngle))
-      );
+        new DriveDistance(drivetrain, -0.5).withTimeout(2),
+        new TurnDegrees(drivetrain, 180),
+        new DriveDistance(drivetrain, -0.5).withTimeout(2),
+        new InstantCommand(() -> rake.setSetpoint(RakeConfig.dispenseAngle)));
   }
 }
