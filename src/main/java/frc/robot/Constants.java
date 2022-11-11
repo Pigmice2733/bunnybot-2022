@@ -78,5 +78,15 @@ public final class Constants {
     public static final boolean rakePrintsEnabled = true;
   }
 
+  public final static class HardStopConfig {
+    public static final int solenoidPortFrontRight = 0;
+    public static final int solenoidPortFrontLeft = 1;
+    public static final int solenoidPortBackLeft = 2;
+    public static final int solenoidPortBackRight = 3;
+
+  }
+
   public final static double axisThreshold = 0.1;
 }
+
+

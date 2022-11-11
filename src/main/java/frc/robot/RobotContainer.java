@@ -22,7 +22,9 @@ import frc.robot.commands.drivetrain.TurnDegrees;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.HardStop;
 import frc.robot.subsystems.RakeOld;
+import pabeles.concurrency.ConcurrencyOps.NewInstance;
 import frc.robot.subsystems.Rake;
 
 /**
@@ -36,6 +38,8 @@ public class RobotContainer {
   private final Controls controls;
   //private final Drivetrain drivetrain;
   // private final Rake rake;
+  HardStop hardstop = new HardStop();
+
 
   private final AutonomousChooser chooser;
 
@@ -115,6 +119,7 @@ public class RobotContainer {
         config);
     
     return new FollowPath(drivetrain, trajectory); */
+    hardstop.release();
     return chooser.chooser.getSelected();
   }
 }
