@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class Drivetrain extends SubsystemBase {
@@ -101,17 +102,17 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  /** @return Current robot rotaiton since last reset in radians */
+  /** Returns the robot's current rotation in radians. */
   public Rotation2d getHeading() {
     return new Rotation2d(-gyro.getAngle() * (Math.PI / 180));
   }
 
-  /** @return Current robot rotation since last reset in degrees scaled between 0 and 360 */
+  /** Returns the robot's rotation since last reset in degrees, between 0 and 360. */
   public double getHeadingDegrees() {
-    return gyro.getAngle() + (gyro.getAngle() < 0 ? 360 : 0);
+    return (gyro.getAngle() % 360);
   }
 
-  /** @return a DifferentialDriveWheelSpeeds object from the encoder velocities. */
+  /** Returns a DifferentialDriveWheelSpeeds object from the encoder velocities. */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     double left = leftDrive.getEncoder().getVelocity();
     double right = rightDrive.getEncoder().getVelocity();
@@ -119,22 +120,22 @@ public class Drivetrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(left, right);
   }
 
- /** @return Average position moved by left and right wheels since last reset */
+ /** Returns the average distance moved by left and right wheels since last reset. */
   public double getAverageDistance() {
     return (leftDrive.getEncoder().getPosition() + rightDrive.getEncoder().getPosition()) / 2;
   }
 
-  /** @return Drivetrains FeedForward  */
+  /** Returns the feedforward object used by the drivetrain. */
   public SimpleMotorFeedforward getFeedForward() {
     return feedforward;
   }
 
-  /** @return Drivetrain */
+  /** Returns the DifferentialDriveKinematics object used by the drivetrain. */
   public DifferentialDriveKinematics getKinematics() {
     return kinematics;  
   }
 
-  /** @return Current robot pose since last reset */
+  /** Returns the robot's current pose. */
   public Pose2d getPose() {
     return pose;
   }
@@ -160,12 +161,13 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * Drives the robot with given voltages for left and right wheels.
+   * Input values are clamped between -12 and 12 because the motor cannot handle voltages more than 12V.
    * 
    * @param left  voltage for left wheels
    * @param right voltage for right wheels
    */
   public void tankDriveVolts(double left, double right) {
-    updateOutputs(left / 12, right / 12); // Divides by 12 to scale possible inputs between 0 and 1 (12 in max volts)
+    updateOutputs(MathUtil.clamp(left/12, -1, 1), MathUtil.clamp(right/12, -1, 1)); // Divides by 12 to scale possible inputs between 0 and 1 (12 in max volts)
   }
 
   /**
