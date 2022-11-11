@@ -69,9 +69,9 @@ public class RobotContainer {
   private void configureButtonBindings(XboxController driver, XboxController operator) {
     // Rake preset angles (automatically switches )
     new JoystickButton(operator, Button.kA.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+        .whenPressed(() -> rake.setLimitSwitchModeDown());
     new JoystickButton(operator, Button.kB.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
+        .whenPressed(() -> rake.setLimitSwitchModeUp());
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
     new JoystickButton(operator, Button.kX.value)

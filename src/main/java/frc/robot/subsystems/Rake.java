@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,7 +27,15 @@ public class Rake extends SubsystemBase {
 
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry;
+   
+  private final DigitalInput topRightLimitSwitch = new DigitalInput(0);
+  private final DigitalInput topLeftLimitSwitch = new DigitalInput(1);
+   private final DigitalInput bottomRightLimitSwitch = new DigitalInput(2);
+  private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(3);
 
+  private boolean Extend = false;
+  private boolean Retract = false;
+ 
   private RakeMode mode = RakeMode.Manual;
 
   public Rake() {
@@ -56,6 +65,21 @@ public class Rake extends SubsystemBase {
   public void periodic() {
     if (mode == RakeMode.Automatic) 
       evaluateControllers();
+
+    if (mode == RakeMode.limitSwitch)
+      if (Extend == true){
+        setOutputs(RakeConfig.limitSwitchSpeed,RakeConfig.limitSwitchSpeed );
+        if (topRightLimitSwitch.get() || topLeftLimitSwitch.get()){
+          setOutputs(0, 0);
+        }
+      }
+      else if (Retract == false){
+        setOutputs(RakeConfig.limitSwitchSpeed*= -1, RakeConfig.limitSwitchSpeed*= -1);
+        if ( bottomLeftLimitSwitch.get() || bottomRightLimitSwitch.get()){
+          setOutputs(0, 0);
+        }
+      }
+      
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
@@ -102,6 +126,16 @@ public class Rake extends SubsystemBase {
     rightController.setSetpoint(setpoint);
   }
 
+  public void setLimitSwitchModeUp(){
+    Extend = true;
+    Retract = false;
+  }
+
+  public void setLimitSwitchModeDown(){
+    Retract = true;
+    Extend = false;
+  }
+
   public void setMode(RakeMode mode) {
     this.mode = mode;
 
@@ -115,5 +149,8 @@ public class Rake extends SubsystemBase {
 
     if (this.mode == RakeMode.Manual)
       setMode(RakeMode.Automatic);
+
+    if (this.mode == RakeMode.limitSwitch)
+      setMode(RakeMode.limitSwitch);
   }
 }

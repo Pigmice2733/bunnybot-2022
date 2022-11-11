@@ -37,5 +37,6 @@ public class Controls {
         double joystickValue = operator.getRightTriggerAxis() - operator.getLeftTriggerAxis();
         joystickValue = MathUtil.applyDeadband(joystickValue, threshold);
         return joystickValue * RakeConfig.motorSpeed;
+        
     }
 }
