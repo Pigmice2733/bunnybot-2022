@@ -11,28 +11,29 @@ import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.kForward;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.kReverse;
 
-
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class HardStop extends SubsystemBase {
 
-  private final DoubleSolenoid frontSolenoid, backSolenoid;
+  private final DoubleSolenoid frontSolenoid;//, backSolenoid;
+  private final Compressor compressor;
 
   /** Creates a new HardStop. */
   public HardStop() {
     frontSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortFrontLeft, HardStopConfig.solenoidPortFrontRight);
-    backSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortBackLeft, HardStopConfig.solenoidPortBackRight);
+    //backSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortBackLeft, HardStopConfig.solenoidPortBackRight);
+    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
   }
 
   public void setStop(){
     frontSolenoid.set(kForward);
-    backSolenoid.set(kForward);
+    //backSolenoid.set(kForward);
   }
 
   public void release(){
     frontSolenoid.set(kReverse);
-    backSolenoid.set(kReverse);
+    //backSolenoid.set(kReverse);
   }
 }

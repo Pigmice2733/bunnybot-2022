@@ -18,3 +18,4 @@ Y button: rotate rake to starting angle
 A button: rotate rake to ground-level angle
 B button: rotate rake to just above ground level
 back button: hold to run auto-dispense routine, release to cancel
+start button: emergency release hardstop

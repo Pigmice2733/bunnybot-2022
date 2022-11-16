@@ -85,6 +85,11 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kX.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle)); */
 
+    //Emergency Release the Hard stop pistons
+    new JoystickButton(operator, Button.kStart.value)
+        .whenPressed(hardstop::release);
+
+
     // Toggle rake mode
     // new JoystickButton(operator, Button.kRightBumper.value)
     //     .whenPressed(rake::toggleMode);
@@ -92,15 +97,17 @@ public class RobotContainer {
     //     .whenPressed(rake::toggleDisabled);
 
     // Auto turn 90 degrees
-    /* new JoystickButton(driver, Button.kRightBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
-    new JoystickButton(driver, Button.kLeftBumper.value)
-        .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); */
+    //  new JoystickButton(driver, Button.kRightBumper.value)
+    //     .whenPressed() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
+    // new JoystickButton(driver, Button.kLeftBumper.value)
+    //     .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
 
     // Auto dispense (hold, release to cancel)
     // new JoystickButton(operator, Button.kBack.value)
     //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
     //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
+
+    
   }
 
   /**
@@ -119,7 +126,8 @@ public class RobotContainer {
         config);
     
     return new FollowPath(drivetrain, trajectory); */
-    hardstop.release();
+  
+    hardstop.setStop();
     return chooser.chooser.getSelected();
   }
 }
