@@ -127,7 +127,7 @@ public class RobotContainer {
     
     return new FollowPath(drivetrain, trajectory); */
   
-    hardstop.setStop();
+    hardstop.release();
     return chooser.chooser.getSelected();
   }
 }
