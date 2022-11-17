@@ -87,7 +87,7 @@ public class RobotContainer {
 
     //Emergency Release the Hard stop pistons
     new JoystickButton(operator, Button.kStart.value)
-        .whenPressed(hardstop::release);
+        .whenPressed(hardstop::retractStop);
 
 
     // Toggle rake mode
@@ -127,7 +127,7 @@ public class RobotContainer {
     
     return new FollowPath(drivetrain, trajectory); */
   
-    hardstop.release();
+    hardstop.retractStop();
     return chooser.chooser.getSelected();
   }
 }
