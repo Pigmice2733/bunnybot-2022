@@ -83,7 +83,7 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
     new JoystickButton(operator, Button.kX.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle)); */
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
 
     //Emergency Release the Hard stop pistons
     new JoystickButton(operator, Button.kStart.value)
