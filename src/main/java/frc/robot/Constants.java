@@ -54,13 +54,21 @@ public final class Constants {
   public final static class RakeConfig {
     public static enum RakeMode {
       Automatic,
-      Manual
+      Manual,
+      limitSwitch
     }
 
     public static final double gearRatio = 1 / 1;
     public static final int leftMotorID = 0;
     public static final int rightMotorID = 60;
     public static final double motorSpeed = 1;
+    public static double limitSwitchSpeed = 1;
+
+    public static final int topRightLimitSwitchID = 0;
+    public static final int topLeftLimitSwitchID = 1;
+    public static final int bottomRightLimitSwitchID = 2;
+    public static final int bottomLeftLimitSwitchID = 3;
+    
 
     // Preset rake angles (degrees)
     public static final double startAngle = 60;
