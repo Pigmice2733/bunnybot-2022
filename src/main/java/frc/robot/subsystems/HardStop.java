@@ -8,18 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HardStopConfig;
 import frc.robot.Constants.ShuffleboardConfig;
 
-import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.kForward;
-
-import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.kReverse;
-
-import java.time.Period;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 
 public class HardStop extends SubsystemBase {
 
@@ -36,16 +31,16 @@ public class HardStop extends SubsystemBase {
 
   public void periodic() {
     if (ShuffleboardConfig.pneumaticsPrintsEnabled)
-      Shuffleboard.getTab("Pneumatics").add("Pressure", compressor.getPressure());
+      pressureEntry.setDouble(compressor.getPressure());
   }
 
   public void engageStop(){
-    frontSolenoid.set(kForward);
-    backSolenoid.set(kForward);
+    frontSolenoid.set(Value.kForward);
+    backSolenoid.set(Value.kForward);
   }
 
   public void retractStop(){
-    frontSolenoid.set(kReverse);
-    backSolenoid.set(kReverse);
+    frontSolenoid.set(Value.kReverse);
+    backSolenoid.set(Value.kReverse);
   }
 }
