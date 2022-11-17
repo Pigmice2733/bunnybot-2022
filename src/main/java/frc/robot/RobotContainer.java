@@ -36,9 +36,9 @@ import frc.robot.subsystems.Rake;
  */
 public class RobotContainer {
   private final Controls controls;
-  //private final Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
   // private final Rake rake;
-  HardStop hardstop = new HardStop();
+  //HardStop hardstop = new HardStop();
 
 
   private final AutonomousChooser chooser;
@@ -49,8 +49,8 @@ public class RobotContainer {
   //private AutoDispense autoDispense = new AutoDispense(drivetrain);
 
   public RobotContainer() {
-    // drivetrain = new Drivetrain();
-    // rake = new Rake();
+    drivetrain = new Drivetrain();
+    //rake = new Rake();
 
     chooser = new AutonomousChooser();
 
@@ -76,18 +76,18 @@ public class RobotContainer {
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
     // Rake preset angles (automatically switches )
-    new JoystickButton(operator, Button.kA.value)
-        .whenPressed(() -> rake.setLimitSwitchModeDown());
-    new JoystickButton(operator, Button.kB.value)
-        .whenPressed(() -> rake.setLimitSwitchModeUp());
-    new JoystickButton(operator, Button.kY.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
-    new JoystickButton(operator, Button.kX.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
+    // new JoystickButton(operator, Button.kA.value)
+    //     .whenPressed(() -> rake.setLimitSwitchModeDown());
+    // new JoystickButton(operator, Button.kB.value)
+    //     .whenPressed(() -> rake.setLimitSwitchModeUp());
+    // new JoystickButton(operator, Button.kY.value)
+    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+    // new JoystickButton(operator, Button.kX.value)
+    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
 
     //Emergency Release the Hard stop pistons
-    new JoystickButton(operator, Button.kStart.value)
-        .whenPressed(hardstop::retractStop);
+    // new JoystickButton(operator, Button.kStart.value)
+    //     .whenPressed(hardstop::retractStop);
 
 
     // Toggle rake mode
@@ -127,7 +127,7 @@ public class RobotContainer {
     
     return new FollowPath(drivetrain, trajectory); */
   
-    hardstop.retractStop();
+    //hardstop.retractStop();
     return chooser.chooser.getSelected();
   }
 }
