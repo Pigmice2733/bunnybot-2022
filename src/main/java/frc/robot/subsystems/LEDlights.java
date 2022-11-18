@@ -8,19 +8,26 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LEDlights extends SubsystemBase {
+public class LEDLights extends SubsystemBase {
   private AddressableLED lights = new AddressableLED(0);
-  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(0);
+  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(10);
+
+  //NetworkTableEntry r = Shuffleboard.get
 
   /** Creates a new LEDlights. */
-  public LEDlights() {
+  public LEDLights() {
+    
     lights.setData(buffer);
     lights.start();
   }
 
-  public void setColor(int hue) {
+  public void periodic() {
+
+  }
+
+  public void setColor(int r, int g, int b) {
     for (int i = 0; i < buffer.getLength(); i++) {
-      buffer.setHSV(i, hue, 255, 128);
+      buffer.setRGB(i, r, g, b);
     }
   }
 }

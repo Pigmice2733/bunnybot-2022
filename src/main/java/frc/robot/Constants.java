@@ -59,15 +59,15 @@ public final class Constants {
     }
 
     public static final double gearRatio = 1 / 1;
-    public static final int leftMotorID = 0;
-    public static final int rightMotorID = 60;
+    public static final int leftMotorID = 20;
+    public static final int rightMotorID = 0;
     public static final double motorSpeed = 1;
-    public static double limitSwitchSpeed = 1;
+    public static double limitSwitchSpeed = 0.3;
 
-    public static final int topRightLimitSwitchID = 0;
-    public static final int topLeftLimitSwitchID = 1;
+    public static final int topRightLimitSwitchID = 3;
+    public static final int topLeftLimitSwitchID = 0;
     public static final int bottomRightLimitSwitchID = 2;
-    public static final int bottomLeftLimitSwitchID = 3;
+    public static final int bottomLeftLimitSwitchID = 1;
     
 
     // Preset rake angles (degrees)

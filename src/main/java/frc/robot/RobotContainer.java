@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.swing.plaf.OptionPaneUI;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -23,6 +25,7 @@ import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HardStop;
+import frc.robot.subsystems.LEDLights;
 import frc.robot.subsystems.RakeOld;
 import pabeles.concurrency.ConcurrencyOps.NewInstance;
 import frc.robot.subsystems.Rake;
@@ -36,12 +39,12 @@ import frc.robot.subsystems.Rake;
  */
 public class RobotContainer {
   private final Controls controls;
-  private final Drivetrain drivetrain;
-  // private final Rake rake;
+  //private final Drivetrain drivetrain;
+  private final Rake rake;
   //HardStop hardstop = new HardStop();
 
 
-  private final AutonomousChooser chooser;
+  //private final AutonomousChooser chooser;
 
   private XboxController driver;
   private XboxController operator;
@@ -49,10 +52,12 @@ public class RobotContainer {
   //private AutoDispense autoDispense = new AutoDispense(drivetrain);
 
   public RobotContainer() {
-    drivetrain = new Drivetrain();
-    //rake = new Rake();
+    //drivetrain = new Drivetrain();
+    rake = new Rake();
+    LEDLights lights = new LEDLights();
+    lights.setColor(80, 254, 126);
 
-    chooser = new AutonomousChooser();
+    //chooser = new AutonomousChooser();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -63,7 +68,7 @@ public class RobotContainer {
         controls::getDriveSpeed,
         controls::getTurnSpeed)); */
 
-    // rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
 
     configureButtonBindings(driver, operator);
   }
@@ -88,6 +93,12 @@ public class RobotContainer {
     //Emergency Release the Hard stop pistons
     // new JoystickButton(operator, Button.kStart.value)
     //     .whenPressed(hardstop::retractStop);
+
+    new JoystickButton(operator, Button.kA.value)
+      .whenPressed(rake::setLimitSwitchModeUp);
+
+    new JoystickButton(operator, Button.kX.value)
+      .whenPressed(rake::setLimitSwitchModeDown);
 
 
     // Toggle rake mode
@@ -116,18 +127,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    /* drivetrain.resetOdometry();
-    
-    TrajectoryConfig config = new TrajectoryConfig(1.7, 0.7);
-    config.setKinematics(drivetrain.getKinematics());
-    
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        List.of(new Pose2d(), new Pose2d(2, -2, new Rotation2d(-45)), new Pose2d(2.5, 0, new Rotation2d(90))),
-        config);
-    
-    return new FollowPath(drivetrain, trajectory); */
-  
-    //hardstop.retractStop();
-    return chooser.chooser.getSelected();
+    return null;
   }
 }
