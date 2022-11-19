@@ -55,7 +55,6 @@ public class RobotContainer {
     //drivetrain = new Drivetrain();
     rake = new Rake();
     LEDLights lights = new LEDLights();
-    lights.setColor(80, 254, 126);
 
     //chooser = new AutonomousChooser();
 
@@ -69,6 +68,7 @@ public class RobotContainer {
         controls::getTurnSpeed)); */
 
     rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    lights.setRGB(80, 254, 126);
 
     configureButtonBindings(driver, operator);
   }
