@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.RakeConfig;
@@ -19,7 +20,7 @@ import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
 
 public class Rake extends SubsystemBase {
-  private final CANSparkMax leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
+  private final CANSparkMax leftMotor;
   private final CANSparkMax rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
 
   private final PIDController leftController = new PIDController(
@@ -30,10 +31,10 @@ public class Rake extends SubsystemBase {
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry;
    
-  private final DigitalInput topRightLimitSwitch = new DigitalInput(0);
-  private final DigitalInput topLeftLimitSwitch = new DigitalInput(1);
-   private final DigitalInput bottomRightLimitSwitch = new DigitalInput(2);
-  private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(3);
+  private final DigitalInput topRightLimitSwitch = new DigitalInput(RakeConfig.topRightLimitSwitchID);
+  private final DigitalInput topLeftLimitSwitch = new DigitalInput(RakeConfig.topLeftLimitSwitchID);
+   private final DigitalInput bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
+  private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
 
   private boolean Extend = false;
   private boolean Retract = false;
@@ -41,6 +42,8 @@ public class Rake extends SubsystemBase {
   private RakeMode mode = RakeMode.Manual;
 
   public Rake() {
+    leftMotor = new CANSparkMax(20, MotorType.kBrushless);
+
     leftMotor.restoreFactoryDefaults();
     rightMotor.restoreFactoryDefaults();
 
@@ -68,20 +71,25 @@ public class Rake extends SubsystemBase {
     if (mode == RakeMode.limitSwitch)
       if (Extend == true){
         setOutputs(RakeConfig.limitSwitchSpeed,RakeConfig.limitSwitchSpeed );
-        if (topRightLimitSwitch.get() || topLeftLimitSwitch.get()){
+        if (topLeftLimitSwitch.get()){
           setOutputs(0, 0);
+          Extend = false;
+          
         }
       }
-      else if (Retract == false){
+      else if (Retract == true){
         setOutputs(RakeConfig.limitSwitchSpeed*= -1, RakeConfig.limitSwitchSpeed*= -1);
-        if ( bottomLeftLimitSwitch.get() || bottomRightLimitSwitch.get()){
+        if ( bottomLeftLimitSwitch.get()){
           setOutputs(0, 0);
+          Retract = false;
         }
       }
       
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
+
+      //leftMotor.set(0.3);
   }
 
   private void evaluateControllers() {
@@ -96,11 +104,16 @@ public class Rake extends SubsystemBase {
     targetAngleEntry.setDouble(rightController.getSetpoint());
     leftAngleEntry.setDouble(leftMotor.getEncoder().getPosition());
     rightAngleEntry.setDouble(rightMotor.getEncoder().getPosition());
+    SmartDashboard.putBoolean("TopLeftSwitch", topLeftLimitSwitch.get());
+    SmartDashboard.putBoolean("BottomLeftSwitch", bottomLeftLimitSwitch.get());
+    SmartDashboard.putString("Mode", mode.toString());
+    SmartDashboard.putBoolean("Extending", Extend);
+    SmartDashboard.putBoolean("Retracting", Retract);
   }
 
   public void manualDrive(double left, double right) {
     // Enable rake when trigger is pressed a certain amount
-    if (left > 0.1 || right > 0.1)
+    if (Math.abs(left) > 0.1 || Math.abs(right) > 0.1)
       setMode(RakeMode.Manual);
 
     if (mode == RakeMode.Manual)
@@ -132,11 +145,13 @@ public class Rake extends SubsystemBase {
   public void setLimitSwitchModeUp(){
     Extend = true;
     Retract = false;
+    setMode(RakeMode.limitSwitch);
   }
 
   public void setLimitSwitchModeDown(){
     Retract = true;
     Extend = false;
+    setMode(RakeMode.limitSwitch);
   }
 
   public void setMode(RakeMode mode) {

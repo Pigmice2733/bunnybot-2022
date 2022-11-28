@@ -28,6 +28,7 @@ import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HardStop;
+import frc.robot.subsystems.LEDLights;
 import frc.robot.subsystems.RakeOld;
 import pabeles.concurrency.ConcurrencyOps.NewInstance;
 import frc.robot.subsystems.Rake;
@@ -67,7 +68,8 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
 
-    // rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    lights.setRGB(80, 254, 126);
 
     List<Command> autoCommands = List.of(
       //new DriveAndDispense(drivetrain, rake),
@@ -105,6 +107,12 @@ public class RobotContainer {
     //Emergency Release the Hard stop pistons
     // new JoystickButton(operator, Button.kStart.value)
     //     .whenPressed(hardstop::retractStop);
+
+    new JoystickButton(operator, Button.kA.value)
+      .whenPressed(rake::setLimitSwitchModeUp);
+
+    new JoystickButton(operator, Button.kX.value)
+      .whenPressed(rake::setLimitSwitchModeDown);
 
 
     // Toggle rake mode
