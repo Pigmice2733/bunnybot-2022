@@ -28,7 +28,7 @@ import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HardStop;
-import frc.robot.subsystems.LEDLights;
+import frc.robot.subsystems.LEDlights;
 import frc.robot.subsystems.RakeOld;
 import pabeles.concurrency.ConcurrencyOps.NewInstance;
 import frc.robot.subsystems.Rake;

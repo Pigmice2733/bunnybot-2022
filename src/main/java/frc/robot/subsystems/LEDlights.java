@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LEDLights extends SubsystemBase {
+public class LEDlights extends SubsystemBase {
   private AddressableLED lights = new AddressableLED(0);
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(10);
 
   //NetworkTableEntry r = Shuffleboard.get
 
   /** Creates a new LEDlights. */
-  public LEDLights() {
+  public LEDlights() {
     
     lights.setData(buffer);
     lights.start();
