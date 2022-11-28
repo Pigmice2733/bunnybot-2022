@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.RakeConfig;
@@ -18,6 +22,7 @@ import frc.robot.commands.AutoRoutines.AutoDispense;
 import frc.robot.commands.AutoRoutines.DriveAndDispense;
 import frc.robot.commands.AutoRoutines.TestPath;
 import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
@@ -37,33 +42,45 @@ import frc.robot.subsystems.Rake;
 public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
-  // private final Rake rake;
+  private final Rake rake;
   //HardStop hardstop = new HardStop();
 
 
-  private final AutonomousChooser chooser;
+  //private final AutonomousChooser chooser;
 
   private XboxController driver;
   private XboxController operator;
 
   //private AutoDispense autoDispense = new AutoDispense(drivetrain);
 
+  private SendableChooser<Command> autoChooser;
+
   public RobotContainer() {
     drivetrain = new Drivetrain();
-    //rake = new Rake();
+    rake = new Rake();
 
-    chooser = new AutonomousChooser();
+    //chooser = new AutonomousChooser();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
     controls = new Controls(driver, operator);
 
-    /* drivetrain.setDefaultCommand(new ArcadeDrive(
-        drivetrain,
-        controls::getDriveSpeed,
-        controls::getTurnSpeed)); */
+    drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
 
     // rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+
+    List<Command> autoCommands = List.of(
+      //new DriveAndDispense(drivetrain, rake),
+      new DriveDistance(drivetrain, 3)
+    );
+
+    autoCommands.forEach(command -> {
+			autoChooser.addOption(command.getName(), command);
+		});
+
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.addOption("None", new WaitCommand(1));
+    
 
     configureButtonBindings(driver, operator);
   }
@@ -97,10 +114,11 @@ public class RobotContainer {
     //     .whenPressed(rake::toggleDisabled);
 
     // Auto turn 90 degrees
-    //  new JoystickButton(driver, Button.kRightBumper.value)
-    //     .whenPressed() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
-    // new JoystickButton(driver, Button.kLeftBumper.value)
-    //     .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
+    new JoystickButton(driver, Button.kRightBumper.value)
+      .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
+    
+    new JoystickButton(driver, Button.kLeftBumper.value)
+      .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
 
     // Auto dispense (hold, release to cancel)
     // new JoystickButton(operator, Button.kBack.value)
@@ -128,6 +146,6 @@ public class RobotContainer {
     return new FollowPath(drivetrain, trajectory); */
   
     //hardstop.retractStop();
-    return chooser.chooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
