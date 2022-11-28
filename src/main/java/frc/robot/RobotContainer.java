@@ -69,7 +69,6 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
 
     rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
-    lights.setRGB(80, 254, 126);
 
     List<Command> autoCommands = List.of(
       //new DriveAndDispense(drivetrain, rake),
