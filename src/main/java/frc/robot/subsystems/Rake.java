@@ -28,6 +28,8 @@ public class Rake extends SubsystemBase {
   private final PIDController rightController = new PIDController(
       RakeConfig.kP, RakeConfig.kI, RakeConfig.kD);
 
+ private double leftOutput;
+ private double rightOutput;
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry;
    
@@ -36,8 +38,12 @@ public class Rake extends SubsystemBase {
    private final DigitalInput bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
   private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
 
-  private boolean Extend = false;
-  private boolean Retract = false;
+  public boolean GetTopRightSwitch() { return !topRightLimitSwitch.get(); }
+  public boolean GetTopLeftSwitch() { return !topLeftLimitSwitch.get(); }
+  public boolean GetBottomRightSwitch() { return !bottomRightLimitSwitch.get(); }
+  public boolean GetBottomLeftSwitch() { return !bottomLeftLimitSwitch.get(); }
+
+
  
   private RakeMode mode = RakeMode.Manual;
 
@@ -65,26 +71,30 @@ public class Rake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+    if(GetTopLeftSwitch()){
+      leftOutput = Math.min(0,leftOutput);
+    }
+
+    if(GetTopRightSwitch()){
+      rightOutput = Math.min(0,rightOutput);
+    }
+
+    if(GetBottomLeftSwitch()){
+      leftOutput = Math.max(0,leftOutput);
+    }
+
+    if(GetBottomRightSwitch()){
+      rightOutput = Math.max(0,rightOutput);
+    }
+
+    leftMotor.set(leftOutput);
+    rightMotor.set(rightOutput);
+
     if (mode == RakeMode.Automatic)
       evaluateControllers();
-
-    if (mode == RakeMode.limitSwitch)
-      if (Extend == true){
-        setOutputs(RakeConfig.limitSwitchSpeed,RakeConfig.limitSwitchSpeed );
-        if (topLeftLimitSwitch.get()){
-          setOutputs(0, 0);
-          Extend = false;
-          
-        }
-      }
-      else if (Retract == true){
-        setOutputs(RakeConfig.limitSwitchSpeed*= -1, RakeConfig.limitSwitchSpeed*= -1);
-        if ( bottomLeftLimitSwitch.get()){
-          setOutputs(0, 0);
-          Retract = false;
-        }
-      }
-      
+    
+    
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
@@ -107,9 +117,7 @@ public class Rake extends SubsystemBase {
     SmartDashboard.putBoolean("TopLeftSwitch", topLeftLimitSwitch.get());
     SmartDashboard.putBoolean("BottomLeftSwitch", bottomLeftLimitSwitch.get());
     SmartDashboard.putString("Mode", mode.toString());
-    SmartDashboard.putBoolean("Extending", Extend);
-    SmartDashboard.putBoolean("Retracting", Retract);
-  }
+    }
 
   public void manualDrive(double left, double right) {
     // Enable rake when trigger is pressed a certain amount
@@ -121,12 +129,13 @@ public class Rake extends SubsystemBase {
   }
 
   public void manualDrive(double speed) {
-    manualDrive(speed, speed);
+    setOutputs(speed, speed);
   }
 
-  private void setOutputs(double left, double right) {
-    leftMotor.set(left);
-    rightMotor.set(right);
+  public void setOutputs(double left, double right) {
+    leftOutput = left;
+    rightOutput = right;
+
 
     if (ShuffleboardConfig.rakePrintsEnabled) {
       leftOutputEntry.setDouble(left);
@@ -142,17 +151,9 @@ public class Rake extends SubsystemBase {
     rightController.setSetpoint(setpoint);
   }
 
-  public void setLimitSwitchModeUp(){
-    Extend = true;
-    Retract = false;
-    setMode(RakeMode.limitSwitch);
-  }
+ 
 
-  public void setLimitSwitchModeDown(){
-    Retract = true;
-    Extend = false;
-    setMode(RakeMode.limitSwitch);
-  }
+  
 
   public void setMode(RakeMode mode) {
     this.mode = mode;
@@ -170,5 +171,8 @@ public class Rake extends SubsystemBase {
 
     if (this.mode == RakeMode.limitSwitch)
       setMode(RakeMode.limitSwitch);
+  }
+  public RakeMode getMode(){
+    return mode;
   }
 }

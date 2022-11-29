@@ -24,6 +24,8 @@ import frc.robot.commands.AutoRoutines.TestPath;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.rake.RotateBackwardsLimitSwitch;
+import frc.robot.commands.rake.RotateForwardLimitSwitch;
 import frc.robot.commands.rake.RotateRakeAngle;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
@@ -108,10 +110,10 @@ public class RobotContainer {
     //     .whenPressed(hardstop::retractStop);
 
     new JoystickButton(operator, Button.kA.value)
-      .whenPressed(rake::setLimitSwitchModeUp);
+      .whenPressed(new RotateForwardLimitSwitch(rake));
 
     new JoystickButton(operator, Button.kX.value)
-      .whenPressed(rake::setLimitSwitchModeDown);
+      .whenPressed(new RotateBackwardsLimitSwitch(rake));
 
 
     // Toggle rake mode
