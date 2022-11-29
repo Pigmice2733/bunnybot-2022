@@ -17,7 +17,7 @@ public class ExtendHardStop extends CommandBase {
 
   @Override
   public void initialize() {
-    hardStop.extendStop(); //Extends pistons (HardStop activated)
+    hardStop.engageStop(); //Extends pistons (HardStop activated)
   }
 
   

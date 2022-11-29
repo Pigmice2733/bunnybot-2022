@@ -71,35 +71,24 @@ public class Rake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-    if(GetTopLeftSwitch()){
-      leftOutput = Math.min(0,leftOutput);
-    }
-
-    if(GetTopRightSwitch()){
-      rightOutput = Math.min(0,rightOutput);
-    }
-
-    if(GetBottomLeftSwitch()){
-      leftOutput = Math.max(0,leftOutput);
-    }
-
-    if(GetBottomRightSwitch()){
-      rightOutput = Math.max(0,rightOutput);
-    }
-
-    leftMotor.set(leftOutput);
-    rightMotor.set(rightOutput);
+  
 
     if (mode == RakeMode.Automatic)
       evaluateControllers();
-    
-    
+
+      if(GetTopLeftSwitch()) leftOutput = Math.min(0,leftOutput);
+  
+      if(GetTopRightSwitch()) rightOutput = Math.min(0,rightOutput);
+  
+      if(GetBottomLeftSwitch()) leftOutput = Math.max(0,leftOutput);
+  
+      if(GetBottomRightSwitch()) rightOutput = Math.max(0,rightOutput);
+  
+      leftMotor.set(leftOutput);
+      rightMotor.set(rightOutput);
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
-
-      //leftMotor.set(0.3);
   }
 
   private void evaluateControllers() {
@@ -150,10 +139,6 @@ public class Rake extends SubsystemBase {
     leftController.setSetpoint(setpoint);
     rightController.setSetpoint(setpoint);
   }
-
- 
-
-  
 
   public void setMode(RakeMode mode) {
     this.mode = mode;
