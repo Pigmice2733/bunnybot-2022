@@ -20,7 +20,6 @@ public class ExtendHardStop extends CommandBase {
     hardStop.engageStop(); //Extends pistons (HardStop activated)
   }
 
-  
   @Override
   public boolean isFinished() {
     return true;

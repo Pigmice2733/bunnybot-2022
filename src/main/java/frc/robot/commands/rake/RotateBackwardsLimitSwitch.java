@@ -27,7 +27,7 @@ private final Rake rake;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +37,6 @@ private final Rake rake;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-  return ((rake.GetBottomLeftSwitch() && rake.GetBottomRightSwitch()) || rake.getMode()!=RakeMode.limitSwitch);
+  return ((rake.getBottomLeftSwitch() || rake.getBottomRightSwitch()) || rake.getMode() != RakeMode.limitSwitch);
   }
 }

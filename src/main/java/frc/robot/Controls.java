@@ -9,8 +9,6 @@ public class Controls {
     XboxController driver;
     XboxController operator;
 
-    // ALL CONTORLS ARE TEMPORARY UNTIL WE MEET WITH DRIVE TEAM
-
     private double threshold = Constants.axisThreshold;
     // if a value from a joystick is less than this, it will return 0
 

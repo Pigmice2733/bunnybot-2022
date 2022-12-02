@@ -10,17 +10,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;  
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.AutoRoutines.AutoDispense;
 import frc.robot.commands.AutoRoutines.DriveAndDispense;
-import frc.robot.commands.AutoRoutines.TestPath;
 import frc.robot.commands.HardStopper.RetractHardStop;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
@@ -30,8 +28,6 @@ import frc.robot.commands.rake.RotateForwardLimitSwitch;
 import frc.robot.commands.rake.RotateRakeManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HardStop;
-import frc.robot.subsystems.LEDlights;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
 import frc.robot.subsystems.Rake;
 
 /**
@@ -105,13 +101,13 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kStart.value)
         .whenPressed(new RetractHardStop(hardStop));
 
-    new JoystickButton(operator, Button.kA.value)
-      .whenPressed(new RotateForwardLimitSwitch(rake));
+    // new JoystickButton(operator, Button.kA.value)
+    //   .whenPressed(new RotateForwardLimitSwitch(rake));
 
-    new JoystickButton(operator, Button.kX.value)
-      .whenPressed(new RotateBackwardsLimitSwitch(rake));
+    // new JoystickButton(operator, Button.kX.value)
+    //   .whenPressed(new RotateBackwardsLimitSwitch(rake));
 
-    // Auto turn 90 degrees
+    // Auto turn 180 degrees
     new JoystickButton(driver, Button.kRightBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
     
@@ -122,8 +118,6 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kBack.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
       .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
-
-    
   }
 
   /**
@@ -132,6 +126,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return new SequentialCommandGroup(new RetractHardStop(hardStop), autoChooser.getSelected());
   }
 }

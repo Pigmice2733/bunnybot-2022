@@ -21,7 +21,7 @@ public class DriveDistance extends PIDCommand {
         (output) -> { drivetrain.arcadeDrive(output, 0); },
         drivetrain
     );
-    this.m_controller.setTolerance(0.05, 0.1);
+    getController().setTolerance(0.05, 0.1);
 
     addRequirements(drivetrain);
 
@@ -36,6 +36,6 @@ public class DriveDistance extends PIDCommand {
 
   @Override
   public boolean isFinished() {
-    return this.m_controller.atSetpoint();
+    return getController().atSetpoint();
   }
 }

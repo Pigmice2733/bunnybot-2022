@@ -1,6 +1,5 @@
 This file will be used to type out controls after meeting with the drive team.
 
-
 15 Nov 22
 
 DRIVER:
@@ -10,9 +9,9 @@ left bumper: auto rotate 180 deg left
 right bumper: auto rotate 180 deg right
 
 OPERATOR:
+(speed of movement equal to right minus left)
 right trigger: move rake up (positive)
 left trigger: move rake down (negative)
-  (speed of movement equal to right minus left)
 X button: rotate rake to dispensing angle
 Y button: rotate rake to starting angle
 A button: rotate rake to ground-level angle

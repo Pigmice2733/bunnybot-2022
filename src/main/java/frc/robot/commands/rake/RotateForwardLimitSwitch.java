@@ -29,8 +29,7 @@ public class RotateForwardLimitSwitch extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    rake.setMode(RakeMode.limitSwitch);
-    rake.setOutputs(RakeConfig.limitSwitchSpeed, RakeConfig.limitSwitchSpeed);
+
   }
 
   // Called once the command ends or is interrupted.
@@ -40,6 +39,6 @@ public class RotateForwardLimitSwitch extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((rake.GetTopLeftSwitch() && rake.GetTopRightSwitch()) || rake.getMode()!=RakeMode.limitSwitch);
+    return ((rake.getTopLeftSwitch() || rake.getTopRightSwitch()) || rake.getMode() != RakeMode.limitSwitch);
   }
 }

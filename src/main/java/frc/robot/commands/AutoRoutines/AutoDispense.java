@@ -4,21 +4,20 @@
 
 package frc.robot.commands.AutoRoutines;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.rake.RotateForwardLimitSwitch;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
 
 public class AutoDispense extends SequentialCommandGroup {
-  /** Creates a new AutoDispense. */
   public AutoDispense(Drivetrain drivetrain, Rake rake) {
     addCommands(
-        new DriveDistance(drivetrain, -0.5).withTimeout(2),
-        new TurnDegrees(drivetrain, 180),
-        new DriveDistance(drivetrain, -0.5).withTimeout(2),
-        new InstantCommand(() -> rake.setSetpoint(RakeConfig.dispenseAngle)));
+      new DriveDistance(drivetrain, -0.5).withTimeout(2),
+      new TurnDegrees(drivetrain, 180),
+      new DriveDistance(drivetrain, -0.5).withTimeout(2),
+      new RotateForwardLimitSwitch(rake)
+    );
   }
 }

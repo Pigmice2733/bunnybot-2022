@@ -49,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d pose = new Pose2d();
 
   private boolean slowEnabled = false;
-  public double speedFactor = 1;
+  public double outputFactor = 1;
 
   public Drivetrain() {
     // leftFollow.follow(leftDrive);
@@ -85,7 +85,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void setSlow(boolean slowEnabled) { 
     this.slowEnabled = slowEnabled; 
-    speedFactor = slowEnabled ? DrivetrainConfig.slowMultiplier : 1; 
+    outputFactor = slowEnabled ? DrivetrainConfig.slowMultiplier : 1; 
   }
   public void enableSlow() { setSlow(true); }
   public void disableSlow() { setSlow(false); }
@@ -140,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
     return pose;
   }
 
-  /* Zeros odometry, gyro, and drive encoders. */
+  /** Zeros odometry, gyro, and drive encoders. */
   public void resetOdometry() {
     gyro.reset();
     odometry.resetPosition(new Pose2d(), new Rotation2d());
@@ -174,13 +174,13 @@ public class Drivetrain extends SubsystemBase {
    * Drives the robot with given directional and rotational speeds.
    * 
    * @param forward speed in robot's current direction
-   * @param turn    turn speed (clockwise is positive)
+   * @param turn turn speed (clockwise is positive)
    */
   public void arcadeDrive(double forward, double turn) {
     double left = forward + turn;
     double right = forward - turn;
 
-    updateOutputs(left * speedFactor, right);
+    updateOutputs(left, right);
   }
 
   public void stop() {
@@ -194,8 +194,8 @@ public class Drivetrain extends SubsystemBase {
     left = Math.max(Math.min(clampValue, left), -clampValue);
     right = Math.max(Math.min(clampValue, right), -clampValue);
 
-    leftDrive.set(left);
-    rightDrive.set(right);
+    leftDrive.set(left * outputFactor);
+    rightDrive.set(right * outputFactor);
     
     if (ShuffleboardConfig.drivetrainPrintsEnabled) {
       leftOutputEntry.setDouble(left);

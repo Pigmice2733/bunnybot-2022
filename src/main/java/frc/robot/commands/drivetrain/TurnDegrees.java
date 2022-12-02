@@ -17,8 +17,8 @@ public class TurnDegrees extends PIDCommand {
         (output) -> { drivetrain.arcadeDrive(0, output); },
         drivetrain
     );
-    this.m_controller.setTolerance(3, 0.1);
-    this.m_controller.enableContinuousInput(0, 360);
+    getController().setTolerance(3, 1);
+    getController().enableContinuousInput(0, 360);
 
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
@@ -32,6 +32,6 @@ public class TurnDegrees extends PIDCommand {
 
   @Override
   public boolean isFinished() {
-    return this.m_controller.atSetpoint();
+    return getController().atSetpoint();
   }
 }

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -69,7 +68,6 @@ public final class Constants {
     public static final int bottomRightLimitSwitchID = 2;
     public static final int bottomLeftLimitSwitchID = 1;
     
-
     // Preset rake angles (degrees)
     public static final double startAngle = 60;
     public static final double raiseAngle = 15;
@@ -92,10 +90,7 @@ public final class Constants {
     public static final int solenoidPortFrontLeft = 1;
     public static final int solenoidPortBackLeft = 2;
     public static final int solenoidPortBackRight = 3;
-
   }
 
   public final static double axisThreshold = 0.1;
 }
-
-

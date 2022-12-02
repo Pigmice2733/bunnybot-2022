@@ -19,7 +19,6 @@ public class RetractHardStop extends CommandBase {
   public void initialize() {
     hardStop.retractStop(); //Retracts Pistons (HardStop deactivated)
   }
-
   
   @Override
   public boolean isFinished() {
