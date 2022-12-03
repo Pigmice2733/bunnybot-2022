@@ -90,12 +90,12 @@ public class RobotContainer {
     // Rake preset angles (automatically switches )
     new JoystickButton(operator, Button.kA.value)
         .whenPressed(new RotateBackwardsLimitSwitch(rake));
-    new JoystickButton(operator, Button.kB.value)
+    new JoystickButton(operator, Button.kX.value)
         .whenPressed(new RotateForwardLimitSwitch(rake));
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
-    new JoystickButton(operator, Button.kX.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
+    new JoystickButton(operator, Button.kB.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
 
     // Emergency release hardStop pistons
     new JoystickButton(operator, Button.kStart.value)
