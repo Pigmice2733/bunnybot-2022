@@ -10,6 +10,10 @@ import frc.robot.subsystems.HardStop;
 public class ExtendHardStop extends CommandBase {
   private HardStop hardStop;
 
+  /**
+   * Extend the hard-stop pistons.
+   * @param hardStop a hard-stop subsystem
+   */
   public ExtendHardStop(HardStop hardStop) {
     this.hardStop = hardStop;
     addRequirements(hardStop);

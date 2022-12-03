@@ -75,6 +75,11 @@ public class Rake extends SubsystemBase {
   }
 
   @Override
+  /**
+   * Set the motor outputs based on PIDControllers in Automatic mode or other set outputs.
+   * Clamp the motor outputs if limit switches are pressed.
+   * Update the Shuffleboard display.
+   */
   public void periodic() {
     if (mode == RakeMode.Automatic)
       evaluateControllers();
@@ -91,6 +96,7 @@ public class Rake extends SubsystemBase {
       updateShuffleboard();
   }
 
+  /** Determine the new values of the motor outputs based on the PIDControllers. */
   private void evaluateControllers() {
     double leftPos = leftMotor.getEncoder().getPosition();
     double rightPos = rightMotor.getEncoder().getPosition();
@@ -112,6 +118,11 @@ public class Rake extends SubsystemBase {
     bottomRightSwitchEntry.setBoolean(getBottomRightSwitch());
   }
 
+  /**
+   * Enable Manual mode if the triggers are pressed, then update the motor outputs to the input values.
+   * @param left the new output for the left motor
+   * @param right the new output for the right motor
+   */
   public void manualDrive(double left, double right) {
     // Enable rake when trigger is pressed a certain amount
     if (Math.abs(left) > 0.1 || Math.abs(right) > 0.1)
@@ -120,6 +131,11 @@ public class Rake extends SubsystemBase {
     if (mode == RakeMode.Manual)
       setOutputs(left, right);
   }
+
+   /**
+   * Enable Manual mode if the triggers are pressed, then update the motor outputs to the input value.
+   * @param speed the new output for the motors
+   */
   public void manualDrive(double speed) {
     manualDrive(speed, speed);
   }
@@ -133,9 +149,13 @@ public class Rake extends SubsystemBase {
       rightOutputEntry.setDouble(right);
     }
   }
-
+  
+  /**
+   * Set the rake mode to Automatic, then set the PIDControllers' setpoints to the input.
+   * @param setpoint the new setpoint for the PIDControllers
+   */
   public void setSetpoint(double setpoint) {
-    // Set to automatic mode when auto rotate button is pressed
+    // The buttons that call this method don't set the mode to Automatic, so it happens here.
     setMode(RakeMode.Automatic);
 
     leftController.setSetpoint(setpoint);

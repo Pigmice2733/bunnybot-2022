@@ -24,7 +24,6 @@ public class HardStop extends SubsystemBase {
 
   private final NetworkTableEntry pressureEntry;
 
-  /** Creates a new HardStop. */
   public HardStop() { 
     pressureEntry = Shuffleboard.getTab("Pneumatics").add("Pressure", -1.0).getEntry();
   }

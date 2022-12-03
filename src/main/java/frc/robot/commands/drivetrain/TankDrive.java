@@ -8,6 +8,12 @@ public class TankDrive extends CommandBase {
     private final Drivetrain drivetrain;
     private final DoubleSupplier left, right;
 
+    /**
+     * Drive according to an tank-drive system.
+     * @param drivetrain a drivetrain subsystem
+     * @param left the speed to move the left wheels at
+     * @param right the speed to move the right wheels at
+     */
     public TankDrive(Drivetrain drivetrain, DoubleSupplier left, DoubleSupplier right) {
         this.drivetrain = drivetrain;
         this.left = left;

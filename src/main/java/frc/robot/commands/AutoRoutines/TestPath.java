@@ -18,6 +18,10 @@ import frc.robot.commands.drivetrain.FollowPath;
 import frc.robot.subsystems.Drivetrain;
 
 public class TestPath extends CommandBase {
+  /**
+   * Autonomous routine. Follow the path specified in generateTrajectory.
+   * @param drivetrain a drivetrain subsystem
+   */
   public TestPath(Drivetrain drivetrain) {
       TrajectoryConfig config = new TrajectoryConfig(1.7, 0.7);
       config.setKinematics(drivetrain.getKinematics());

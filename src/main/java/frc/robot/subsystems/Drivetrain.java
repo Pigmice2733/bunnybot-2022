@@ -18,9 +18,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.MathUtil;
@@ -67,7 +65,6 @@ public class Drivetrain extends SubsystemBase {
     rightDrive.getEncoder().setPositionConversionFactor(DrivetrainConfig.rotationToDistanceConversion);
 
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drivetrain");
-    ShuffleboardLayout odometryLayout = driveTab.getLayout("Odometry", BuiltInLayouts.kList).withSize(2, 5);
 
     xPosEntry = driveTab.add("X", 0.0).getEntry();
     yPosEntry = driveTab.add("Y", 0.0).getEntry();
@@ -83,6 +80,10 @@ public class Drivetrain extends SubsystemBase {
     updateOdometry();
   }
 
+  /**
+   * Sets motor output factor to a slowMultiplier if slowmode is enabled or 1 if slowmode is disabled.
+   * @param slowEnabled whether or not slowmode should be enabled
+   */
   public void setSlow(boolean slowEnabled) { 
     this.slowEnabled = slowEnabled; 
     outputFactor = slowEnabled ? DrivetrainConfig.slowMultiplier : 1; 

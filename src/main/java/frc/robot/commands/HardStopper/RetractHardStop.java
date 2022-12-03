@@ -10,6 +10,10 @@ import frc.robot.subsystems.HardStop;
 public class RetractHardStop extends CommandBase {
   private HardStop hardStop;
 
+  /**
+   * Retract the hard-stop pistons.
+   * @param hardStop a hard-stop subsystem
+   */
   public RetractHardStop(HardStop hardStop) {
     this.hardStop = hardStop;
     addRequirements(hardStop);  
