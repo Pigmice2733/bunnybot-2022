@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -65,7 +66,7 @@ public class RobotContainer {
 
     List<Command> autoCommands = List.of(
       new DriveAndDispense(drivetrain, rake, hardStop),
-      new DriveDistance(drivetrain, 3)
+      new DriveDistance(drivetrain, Units.inchesToMeters(258))
     );
 
     autoCommands.forEach(command -> {
@@ -94,8 +95,8 @@ public class RobotContainer {
         .whenPressed(new RotateForwardLimitSwitch(rake));
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
-    new JoystickButton(operator, Button.kX.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.dispenseAngle));
+    new JoystickButton(operator, Button.kB.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
 
     // Emergency release hardStop pistons
     new JoystickButton(operator, Button.kStart.value)
@@ -113,6 +114,12 @@ public class RobotContainer {
     
     new JoystickButton(driver, Button.kLeftBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
+
+
+    // Slow mode (1/4 speed)
+    new JoystickButton(driver, Button.kY.value)
+      .whenPressed(() -> drivetrain.enableSlow())
+      .whenReleased(() -> drivetrain.disableSlow());
 
     // Auto dispense (hold, release to cancel)
     new JoystickButton(operator, Button.kBack.value)

@@ -18,7 +18,7 @@ public class TurnDegrees extends PIDCommand {
     super(
       new PIDController(DrivetrainConfig.turnP, DrivetrainConfig.turnI, DrivetrainConfig.turnD), 
         drivetrain::getHeadingDegrees,
-        (rotation + drivetrain.getHeadingDegrees()) % 360, 
+        rotation % 360, 
         (output) -> { drivetrain.arcadeDrive(0, output); },
         drivetrain
     );

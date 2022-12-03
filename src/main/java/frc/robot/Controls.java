@@ -6,12 +6,15 @@ import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.RakeConfig;
 
 public class Controls {
+    public static Controls instance;
+
     XboxController driver;
     XboxController operator;
 
     private double threshold = Constants.axisThreshold; // If a value from a joystick is less than this, it will return 0.
 
     public Controls(XboxController driver, XboxController operator) {
+        instance = this;
         this.driver = driver;
         this.operator = operator;
     }

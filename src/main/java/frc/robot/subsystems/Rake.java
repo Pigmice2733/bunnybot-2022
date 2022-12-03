@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ResourceBundle.Control;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -14,7 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Controls;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
@@ -33,24 +35,33 @@ public class Rake extends SubsystemBase {
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry, topLeftSwitchEntry, topRightSwitchEntry, bottomLeftSwitchEntry, bottomRightSwitchEntry;
    
-  private final DigitalInput topRightLimitSwitch = new DigitalInput(RakeConfig.topRightLimitSwitchID);
-  private final DigitalInput topLeftLimitSwitch = new DigitalInput(RakeConfig.topLeftLimitSwitchID);
-  private final DigitalInput bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
-  private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
+  private final DigitalInput topRightLimitSwitch;
+  private final DigitalInput topLeftLimitSwitch;
+  private final DigitalInput bottomRightLimitSwitch;
+  private final DigitalInput bottomLeftLimitSwitch;
 
   public boolean getTopRightSwitch() { return !topRightLimitSwitch.get(); }
-  public boolean getTopLeftSwitch() { return !topLeftLimitSwitch.get(); }
+  public boolean getTopLeftSwitch() { return !topLeftLimitSwitch.get(); } 
   public boolean getBottomRightSwitch() { return !bottomRightLimitSwitch.get(); }
   public boolean getBottomLeftSwitch() { return !bottomLeftLimitSwitch.get(); }
  
   private RakeMode mode = RakeMode.Manual;
 
   public Rake() {
+    topRightLimitSwitch = new DigitalInput(RakeConfig.topRightLimitSwitchID);
+    topLeftLimitSwitch = new DigitalInput(RakeConfig.topLeftLimitSwitchID);
+    bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
+    bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
+
     leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
     rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
 
     leftMotor.restoreFactoryDefaults();
-    rightMotor.restoreFactoryDefaults();
+    rightMotor.restoreFactoryDefaults();  
+
+    //set encoders to default angle
+    leftMotor.getEncoder().setPosition(RakeConfig.startAngle);
+    rightMotor.getEncoder().setPosition(RakeConfig.startAngle);
 
     // sets encoders to report in degrees
     leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
@@ -72,6 +83,9 @@ public class Rake extends SubsystemBase {
     bottomRightSwitchEntry = rakeTab.add("Bottom Right Switch", false).getEntry();
     
     modeEntry = rakeTab.add("Mode", mode.toString()).getEntry();
+
+    rakeTab.add("Left PID", leftController);
+    rakeTab.add("Right PID", rightController);
   }
 
   @Override
@@ -94,6 +108,12 @@ public class Rake extends SubsystemBase {
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
+
+    if(Controls.instance != null)
+    {
+      if (Controls.instance.getRakeRotationSpeed() > 0.1)
+        setMode(RakeMode.Manual);
+    }
   }
 
   /** Determine the new values of the motor outputs based on the PIDControllers. */
@@ -124,10 +144,6 @@ public class Rake extends SubsystemBase {
    * @param right the new output for the right motor
    */
   public void manualDrive(double left, double right) {
-    // Enable rake when trigger is pressed a certain amount
-    if (Math.abs(left) > 0.1 || Math.abs(right) > 0.1)
-      setMode(RakeMode.Manual);
-
     if (mode == RakeMode.Manual)
       setOutputs(left, right);
   }
