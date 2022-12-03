@@ -35,24 +35,33 @@ public class Rake extends SubsystemBase {
   private final ShuffleboardTab rakeTab;
   private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry, topLeftSwitchEntry, topRightSwitchEntry, bottomLeftSwitchEntry, bottomRightSwitchEntry;
    
-  private final DigitalInput topRightLimitSwitch = new DigitalInput(RakeConfig.topRightLimitSwitchID);
-  private final DigitalInput topLeftLimitSwitch = new DigitalInput(RakeConfig.topLeftLimitSwitchID);
-  private final DigitalInput bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
-  private final DigitalInput bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
+  private final DigitalInput topRightLimitSwitch;
+  private final DigitalInput topLeftLimitSwitch;
+  private final DigitalInput bottomRightLimitSwitch;
+  private final DigitalInput bottomLeftLimitSwitch;
 
   public boolean getTopRightSwitch() { return !topRightLimitSwitch.get(); }
-  public boolean getTopLeftSwitch() { return !topLeftLimitSwitch.get(); }
+  public boolean getTopLeftSwitch() { return !topLeftLimitSwitch.get(); } 
   public boolean getBottomRightSwitch() { return !bottomRightLimitSwitch.get(); }
   public boolean getBottomLeftSwitch() { return !bottomLeftLimitSwitch.get(); }
  
   private RakeMode mode = RakeMode.Manual;
 
   public Rake() {
+    topRightLimitSwitch = new DigitalInput(RakeConfig.topRightLimitSwitchID);
+    topLeftLimitSwitch = new DigitalInput(RakeConfig.topLeftLimitSwitchID);
+    bottomRightLimitSwitch = new DigitalInput(RakeConfig.bottomRightLimitSwitchID);
+    bottomLeftLimitSwitch = new DigitalInput(RakeConfig.bottomLeftLimitSwitchID);
+
     leftMotor = new CANSparkMax(RakeConfig.leftMotorID, MotorType.kBrushless);
     rightMotor = new CANSparkMax(RakeConfig.rightMotorID, MotorType.kBrushless);
 
     leftMotor.restoreFactoryDefaults();
-    rightMotor.restoreFactoryDefaults();
+    rightMotor.restoreFactoryDefaults();  
+
+    //set encoders to default angle
+    leftMotor.getEncoder().setPosition(RakeConfig.startAngle);
+    rightMotor.getEncoder().setPosition(RakeConfig.startAngle);
 
     // sets encoders to report in degrees
     leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
