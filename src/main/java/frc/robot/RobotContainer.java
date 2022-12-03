@@ -114,6 +114,12 @@ public class RobotContainer {
     new JoystickButton(driver, Button.kLeftBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
 
+
+    // Slow mode (1/4 speed)
+    new JoystickButton(driver, Button.kY.value)
+      .whenPressed(() -> drivetrain.enableSlow())
+      .whenReleased(() -> drivetrain.disableSlow());
+
     // Auto dispense (hold, release to cancel)
     new JoystickButton(operator, Button.kBack.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
