@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ResourceBundle.Control;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -14,7 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Controls;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ShuffleboardConfig;
 import frc.robot.Constants.RakeConfig.RakeMode;
@@ -81,6 +83,9 @@ public class Rake extends SubsystemBase {
     bottomRightSwitchEntry = rakeTab.add("Bottom Right Switch", false).getEntry();
     
     modeEntry = rakeTab.add("Mode", mode.toString()).getEntry();
+
+    rakeTab.add("Left PID", leftController);
+    rakeTab.add("Right PID", rightController);
   }
 
   @Override
@@ -98,6 +103,12 @@ public class Rake extends SubsystemBase {
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
+
+    if(Controls.instance != null)
+    {
+      if (Controls.instance.getRakeRotationSpeed() > 0.1)
+        setMode(RakeMode.Manual);
+    }
   }
 
   private void evaluateControllers() {
@@ -122,10 +133,6 @@ public class Rake extends SubsystemBase {
   }
 
   public void manualDrive(double left, double right) {
-    // Enable rake when trigger is pressed a certain amount
-    if (Math.abs(left) > 0.1 || Math.abs(right) > 0.1)
-      setMode(RakeMode.Manual);
-
     if (mode == RakeMode.Manual)
       setOutputs(left, right);
   }
