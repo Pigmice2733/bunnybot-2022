@@ -32,10 +32,10 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax leftDrive = new CANSparkMax(DrivetrainConfig.leftDrivePort, MotorType.kBrushless);
   private final CANSparkMax rightDrive = new CANSparkMax(DrivetrainConfig.rightDrivePort, MotorType.kBrushless);
 
-  // private final CANSparkMax leftFollow = new
-  // CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
-  // private final CANSparkMax rightFollow = new
-  // CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
+  private final CANSparkMax leftFollow = new
+  CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
+  private final CANSparkMax rightFollow = new
+  CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
 
   private final AHRS gyro = new AHRS();
 
