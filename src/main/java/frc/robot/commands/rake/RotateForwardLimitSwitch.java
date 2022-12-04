@@ -13,7 +13,10 @@ import frc.robot.subsystems.Rake;
 public class RotateForwardLimitSwitch extends CommandBase {
   private final Rake rake;
 
-  /** Creates a new RotateForwardLimitSwitch. */
+  /**
+   * Rotate the rake up until the limit switches at the top are pressed.
+   * @param rake a rake subsystem
+   */
   public RotateForwardLimitSwitch(Rake rake) {
     this.rake = rake;
     // Use addRequirements() here to declare subsystem dependencies.

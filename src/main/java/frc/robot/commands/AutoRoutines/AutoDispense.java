@@ -12,6 +12,11 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Rake;
 
 public class AutoDispense extends SequentialCommandGroup {
+  /**
+   * Turn the robot around and lower the rake to dispense a tube.
+   * @param drivetrain a drivetrain subsystem
+   * @param rake a rake subsystem
+   */
   public AutoDispense(Drivetrain drivetrain, Rake rake) {
     addCommands(
       new DriveDistance(drivetrain, -0.5).withTimeout(2),

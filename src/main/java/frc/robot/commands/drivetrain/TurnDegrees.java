@@ -9,6 +9,11 @@ public class TurnDegrees extends PIDCommand {
   private Drivetrain drivetrain;
   private double rotation;
 
+  /**
+   * Use PIDControllers to turn the specified number of degrees.
+   * @param drivetrain a drivetrain subsystem
+   * @param rotation The number of degrees to turn. The robot will turn right if this is positive or left if this is negative.
+   */
   public TurnDegrees(Drivetrain drivetrain, double rotation) {
     super(
       new PIDController(DrivetrainConfig.turnP, DrivetrainConfig.turnI, DrivetrainConfig.turnD), 

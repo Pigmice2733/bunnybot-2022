@@ -45,7 +45,7 @@ public final class Constants {
     public static final double kV = 2.8886;
     public static final double kA = 2.1367;
 
-    // Ramsete config (Do not change, defualt values from documentation)
+    // Ramsete config (Do not change, default values from documentation)
     public static final double kB = 2.0;
     public static final double kZeta = 0.7;
   }
@@ -61,7 +61,7 @@ public final class Constants {
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
     public static final double motorSpeed = 1;
-    public static double limitSwitchSpeed = 0.3;
+    public static final double limitSwitchSpeed = 0.3;
 
     public static final int topRightLimitSwitchID = 3;
     public static final int topLeftLimitSwitchID = 0;

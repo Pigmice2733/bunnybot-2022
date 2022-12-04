@@ -12,6 +12,12 @@ import frc.robot.subsystems.HardStop;
 import frc.robot.subsystems.Rake;
 
 public class DriveAndDispense extends SequentialCommandGroup {
+  /**
+   * Autonomous routine. Drive backward 5 meters and lower the rake to dispense a tube.
+   * @param drivetrain a drivetrain subsystem
+   * @param rake a rake subsystem
+   * @param hardStop a hard-stop subsystem
+   */
   public DriveAndDispense(Drivetrain drivetrain, Rake rake, HardStop hardStop) {
     addCommands(
       new DriveDistance(drivetrain, -5),

@@ -13,6 +13,11 @@ public class DriveDistance extends PIDCommand {
   private Drivetrain drivetrain;
   private double distance;
 
+  /**
+   * Use PIDControllers to drive the specified distance.
+   * @param drivetrain a drivetrain subsystem
+   * @param distance The distance to drive. The robot will move forward if this is positive or backward if this is negative.
+   */
   public DriveDistance(Drivetrain drivetrain, double distance) {
     super(
       new PIDController(DrivetrainConfig.driveDistP, DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD), 

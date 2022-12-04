@@ -11,8 +11,7 @@ public class Controls {
     XboxController driver;
     XboxController operator;
 
-    private double threshold = Constants.axisThreshold;
-    // if a value from a joystick is less than this, it will return 0
+    private double threshold = Constants.axisThreshold; // If a value from a joystick is less than this, it will return 0.
 
     public Controls(XboxController driver, XboxController operator) {
         instance = this;
@@ -20,20 +19,23 @@ public class Controls {
         this.operator = operator;
     }
 
+    /** Return the left joystick's Y as long as it's over the threshold. */
     public double getDriveSpeed() {
         double joystickValue = driver.getLeftY();
-        joystickValue = MathUtil.applyDeadband(-joystickValue, threshold); // Deals with stick drag
+        joystickValue = MathUtil.applyDeadband(-joystickValue, threshold); // deals with stick drag
 
         return joystickValue * DrivetrainConfig.driveSpeed;
     }
 
+    /** Return the right joystick's X as long as it's over the threshold. */
     public double getTurnSpeed() {
         double joystickValue = driver.getRightX();
-        joystickValue = MathUtil.applyDeadband(joystickValue, threshold); // Deals with stick drag
+        joystickValue = MathUtil.applyDeadband(joystickValue, threshold); // deals with stick drag
 
         return joystickValue * DrivetrainConfig.turnSpeed;
     }
 
+    /** Return the difference between the right trigger's output and the left trigger's output as long as it's over the threshold. */
     public double getRakeRotationSpeed() {
         double joystickValue = operator.getRightTriggerAxis() - operator.getLeftTriggerAxis();
         joystickValue = MathUtil.applyDeadband(joystickValue, threshold);

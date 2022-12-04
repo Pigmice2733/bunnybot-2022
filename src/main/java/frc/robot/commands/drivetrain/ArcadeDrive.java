@@ -8,6 +8,12 @@ public class ArcadeDrive extends CommandBase {
     private Drivetrain drivetrain;
     private DoubleSupplier forward, rotate;
 
+    /**
+     * Drive according to an arcade-style driving system.
+     * @param drivetrain a drivetrain subsystem
+     * @param forward the speed to move forward at
+     * @param rotate the rotational speed to rotate at
+     */
     public ArcadeDrive(Drivetrain drivetrain, DoubleSupplier forward, DoubleSupplier rotate) {
         this.drivetrain = drivetrain;
         this.forward = forward;

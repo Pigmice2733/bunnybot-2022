@@ -8,7 +8,12 @@ import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
 public class FollowPath extends RamseteCommand {
-
+    /**
+     * Use a RamseteController to follow a specified path.
+     * Call only from autonomous path-following commands that define a trajectory and a trajectory configuration.
+     * @param drivetrain a drivetrain subsystem
+     * @param trajectory a path-following trajectory
+     */
     public FollowPath(Drivetrain drivetrain, Trajectory trajectory) {
         super(
             trajectory,

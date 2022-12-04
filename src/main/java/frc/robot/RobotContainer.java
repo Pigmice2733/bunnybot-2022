@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -65,7 +66,7 @@ public class RobotContainer {
 
     List<Command> autoCommands = List.of(
       new DriveAndDispense(drivetrain, rake, hardStop),
-      new DriveDistance(drivetrain, 3)
+      new DriveDistance(drivetrain, Units.inchesToMeters(258))
     );
 
     autoCommands.forEach(command -> {
@@ -90,7 +91,7 @@ public class RobotContainer {
     // Rake preset angles (automatically switches )
     new JoystickButton(operator, Button.kA.value)
         .whenPressed(new RotateBackwardsLimitSwitch(rake));
-    new JoystickButton(operator, Button.kX.value)
+    new JoystickButton(operator, Button.kB.value)
         .whenPressed(new RotateForwardLimitSwitch(rake));
     new JoystickButton(operator, Button.kY.value)
         .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
