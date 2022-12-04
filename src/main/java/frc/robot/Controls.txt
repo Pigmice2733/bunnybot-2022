@@ -7,6 +7,7 @@ left joystick: Y - forward speed
 right joystick: X - turn speed
 left bumper: auto rotate 180 deg left
 right bumper: auto rotate 180 deg right
+Y button: Slowmode
 
 OPERATOR:
 (speed of movement equal to right minus left)

@@ -8,10 +8,10 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
   public final static class DrivetrainConfig {
-    public static final int leftDrivePort = 2;
-    public static final int rightDrivePort = 4;
-    public static final int leftFollowPort = 0;
-    public static final int rightFollowPort = 0;
+    public static final int leftDrivePort = 1;
+    public static final int rightDrivePort = 3;
+    public static final int leftFollowPort = 2;
+    public static final int rightFollowPort = 4;
 
     public static final double driveSpeed = .3;
     public static final double turnSpeed = .2;
@@ -58,8 +58,8 @@ public final class Constants {
     }
 
     public static final double gearRatio = 1 / 1;
-    public static final int leftMotorID = 20;
-    public static final int rightMotorID = 0;
+    public static final int leftMotorID = 6;
+    public static final int rightMotorID = 5;
     public static final double motorSpeed = 1;
     public static double limitSwitchSpeed = 0.3;
 
