@@ -102,12 +102,6 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kStart.value)
         .whenPressed(new RetractHardStop(hardStop));
 
-    // new JoystickButton(operator, Button.kA.value)
-    //   .whenPressed(new RotateForwardLimitSwitch(rake));
-
-    // new JoystickButton(operator, Button.kX.value)
-    //   .whenPressed(new RotateBackwardsLimitSwitch(rake));
-
     // Auto turn 180 degrees
     new JoystickButton(driver, Button.kRightBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));

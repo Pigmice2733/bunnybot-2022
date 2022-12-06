@@ -57,16 +57,16 @@ public class Rake extends SubsystemBase {
     leftMotor.restoreFactoryDefaults();
     rightMotor.restoreFactoryDefaults();  
 
-    //set encoders to default angle
-    leftMotor.getEncoder().setPosition(RakeConfig.startAngle);
-    rightMotor.getEncoder().setPosition(RakeConfig.startAngle);
-
     // sets encoders to report in degrees
     leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
     rightMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
 
     leftController.setSetpoint(RakeConfig.startAngle);
     rightController.setSetpoint(RakeConfig.startAngle);
+
+    //set encoders to default angle
+    leftMotor.getEncoder().setPosition(RakeConfig.startAngle);
+    rightMotor.getEncoder().setPosition(RakeConfig.startAngle);
 
     rakeTab = Shuffleboard.getTab("Rake");
     targetAngleEntry = rakeTab.add("Target Angle", RakeConfig.startAngle).getEntry();
