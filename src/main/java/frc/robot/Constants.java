@@ -13,8 +13,8 @@ public final class Constants {
     public static final int leftFollowPort = 2;
     public static final int rightFollowPort = 4;
 
-    public static final double driveSpeed = .3;
-    public static final double turnSpeed = .2;
+    public static final double driveSpeed = 1;
+    public static final double turnSpeed = .5;
 
     // Multiplied by drive speed when in slow mode
     public static final double slowMultiplier = 0.25;
@@ -38,7 +38,8 @@ public final class Constants {
     // Auto turn PID
     public static final double turnP = 0.006;
     public static final double turnI = 0;
-    public static final double turnD = 0.0001;
+    //public static final double turnD = 0.0001;
+    public static final double turnD = 0; // 0 D for initial test
 
     // Drivetrain characterization (Do not change, found using SysId)
     public static final double kS = 0.17247;
@@ -57,16 +58,17 @@ public final class Constants {
       limitSwitch
     }
 
-    public static final double gearRatio = 1 / 1;
+    private static final double gearRatio = 1 / 87.5;
+    public static final double encoderConversion = gearRatio * 360; // Convert from rotations to degrees
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
-    public static final double motorSpeed = 1;
-    public static final double limitSwitchSpeed = 0.3;
+    public static final double motorSpeed = 0.2;
+    public static final double limitSwitchSpeed = 0.2;
 
-    public static final int topRightLimitSwitchID = 3;
-    public static final int topLeftLimitSwitchID = 0;
-    public static final int bottomRightLimitSwitchID = 2;
-    public static final int bottomLeftLimitSwitchID = 1;
+    public static final int topRightLimitSwitchID = 1;
+    public static final int topLeftLimitSwitchID = 2;
+    public static final int bottomRightLimitSwitchID = 0;
+    public static final int bottomLeftLimitSwitchID = 3;
     
     // Preset rake angles (degrees)
     public static final double startAngle = 60;

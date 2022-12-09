@@ -58,8 +58,8 @@ public class Rake extends SubsystemBase {
     rightMotor.restoreFactoryDefaults();  
 
     // sets encoders to report in degrees
-    leftMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
-    rightMotor.getEncoder().setPositionConversionFactor(360 * RakeConfig.gearRatio);
+    leftMotor.getEncoder().setPositionConversionFactor(RakeConfig.encoderConversion);
+    rightMotor.getEncoder().setPositionConversionFactor(RakeConfig.encoderConversion);
 
     leftController.setSetpoint(RakeConfig.startAngle);
     rightController.setSetpoint(RakeConfig.startAngle);
@@ -76,7 +76,7 @@ public class Rake extends SubsystemBase {
     rightOutputEntry = rakeTab.add("Right Output", 0).getEntry();
 
     topLeftSwitchEntry = rakeTab.add("Top Left Switch", false).getEntry();
-    topRightSwitchEntry = rakeTab.add("Top Left Switch", false).getEntry();
+    topRightSwitchEntry = rakeTab.add("Top Right Switch", false).getEntry();
     bottomLeftSwitchEntry = rakeTab.add("Bottom Left Switch", false).getEntry();
     bottomRightSwitchEntry = rakeTab.add("Bottom Right Switch", false).getEntry();
     

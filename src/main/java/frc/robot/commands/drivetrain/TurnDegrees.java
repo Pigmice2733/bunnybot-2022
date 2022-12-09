@@ -1,6 +1,7 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
@@ -24,6 +25,8 @@ public class TurnDegrees extends PIDCommand {
     );
     getController().setTolerance(3, 1);
     getController().enableContinuousInput(0, 360);
+
+    //Shuffleboard.getTab("Drivetrain").add("Drive Distance PID", getController());
 
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;

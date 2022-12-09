@@ -41,8 +41,8 @@ import frc.robot.subsystems.Rake;
 public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
-  private final Rake rake;
-  private final HardStop hardStop;
+  //private final Rake rake;
+  //private final HardStop hardStop;
 
   private XboxController driver;
   private XboxController operator;
@@ -53,8 +53,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     drivetrain = new Drivetrain();
-    rake = new Rake();
-    hardStop = new HardStop();
+    //rake = new Rake();
+    //hardStop = new HardStop();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -62,21 +62,23 @@ public class RobotContainer {
     controls = new Controls(driver, operator);
 
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
-    rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
+    //rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
 
-    List<Command> autoCommands = List.of(
-      new DriveAndDispense(drivetrain, rake, hardStop),
-      new DriveDistance(drivetrain, Units.inchesToMeters(258))
-    );
+    // List<Command> autoCommands = List.of(
+    //   //new DriveAndDispense(drivetrain, rake, hardStop),
+    //   //new DriveDistance(drivetrain, Units.inchesToMeters(258))
+    //   new DriveDistance(drivetrain, 2),
+    //   new TurnDegrees(drivetrain, 90)
+    // );
 
-    autoCommands.forEach(command -> {
-			autoChooser.addOption(command.getName(), command);
-		});
+    // autoCommands.forEach(command -> {
+		// 	autoChooser.addOption(command.getName(), command);
+		// });
 
-    autoChooser = new SendableChooser<Command>();
-    autoChooser.addOption("None", new WaitCommand(1));
+    // autoChooser = new SendableChooser<Command>();
+    // autoChooser.addOption("None", new WaitCommand(1));
     
-    autoDispense = new AutoDispense(drivetrain, rake);
+    //autoDispense = new AutoDispense(drivetrain, rake);
 
     configureButtonBindings(driver, operator);
   }
@@ -88,21 +90,21 @@ public class RobotContainer {
    * passing it to a {@link JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    // Rake preset angles (automatically switches )
-    new JoystickButton(operator, Button.kA.value)
-        .whenPressed(new RotateBackwardsLimitSwitch(rake));
-    new JoystickButton(operator, Button.kB.value)
-        .whenPressed(new RotateForwardLimitSwitch(rake));
-    new JoystickButton(operator, Button.kY.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
-    new JoystickButton(operator, Button.kB.value)
-        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
+    // Rake preset angles (automatically switches to auto or limit switch mode)
+    // new JoystickButton(operator, Button.kA.value)
+    //     .whenPressed(new RotateBackwardsLimitSwitch(rake));
+    // new JoystickButton(operator, Button.kB.value)
+    //     .whenPressed(new RotateForwardLimitSwitch(rake));
+    // new JoystickButton(operator, Button.kY.value)
+    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+    // new JoystickButton(operator, Button.kB.value)
+    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
 
     // Emergency release hardStop pistons
-    new JoystickButton(operator, Button.kStart.value)
-        .whenPressed(new RetractHardStop(hardStop));
+    // new JoystickButton(operator, Button.kStart.value)
+    //     .whenPressed(new RetractHardStop(hardStop));
 
-    // Auto turn 180 degrees
+    // // Auto turn 180 degrees
     new JoystickButton(driver, Button.kRightBumper.value)
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(1)));
     
@@ -110,15 +112,15 @@ public class RobotContainer {
       .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(1))); 
 
 
-    // Slow mode (1/4 speed)
+    // // Slow mode (1/4 speed)
     new JoystickButton(driver, Button.kY.value)
       .whenPressed(() -> drivetrain.enableSlow())
       .whenReleased(() -> drivetrain.disableSlow());
 
-    // Auto dispense (hold, release to cancel)
-    new JoystickButton(operator, Button.kBack.value)
-      .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
-      .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
+    // // Auto dispense (hold, release to cancel)
+    // new JoystickButton(operator, Button.kBack.value)
+    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
+    //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
   }
 
   /**
@@ -127,6 +129,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new RetractHardStop(hardStop), autoChooser.getSelected());
+    //return new SequentialCommandGroup(new RetractHardStop(hardStop), autoChooser.getSelected());
+    //return autoChooser.getSelected();
+    return null;
   }
 }

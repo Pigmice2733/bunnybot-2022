@@ -30,10 +30,9 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax leftDrive = new CANSparkMax(DrivetrainConfig.leftDrivePort, MotorType.kBrushless);
   private final CANSparkMax rightDrive = new CANSparkMax(DrivetrainConfig.rightDrivePort, MotorType.kBrushless);
 
-  private final CANSparkMax leftFollow = new
-  CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
-  private final CANSparkMax rightFollow = new
-  CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
+  private final CANSparkMax leftFollow = new CANSparkMax(DrivetrainConfig.leftFollowPort, MotorType.kBrushless);
+  //private final CANSparkMax leftFollow = new CANSparkMax(6, MotorType.kBrushless);
+  private final CANSparkMax rightFollow = new CANSparkMax(DrivetrainConfig.rightFollowPort, MotorType.kBrushless);
 
   private final AHRS gyro = new AHRS();
 
@@ -50,14 +49,14 @@ public class Drivetrain extends SubsystemBase {
   public double outputFactor = 1;
 
   public Drivetrain() {
-    // leftFollow.follow(leftDrive);
-    // rightFollow.follow(rightDrive);
-
     rightDrive.restoreFactoryDefaults();
     leftDrive.restoreFactoryDefaults();
-    // leftFollow.restoreFactoryDefaults();
-    // rightFollow.restoreFactoryDefaults();
+    leftFollow.restoreFactoryDefaults();
+    rightFollow.restoreFactoryDefaults();
 
+    leftFollow.follow(leftDrive);
+    rightFollow.follow(rightDrive);
+    
     leftDrive.setInverted(false);
     rightDrive.setInverted(true);
 
@@ -207,7 +206,7 @@ public class Drivetrain extends SubsystemBase {
   public void setIdleMode(IdleMode mode) {
     leftDrive.setIdleMode(mode);
     rightDrive.setIdleMode(mode);
-    // leftFollow.setIdleMode(mode);
-    // rightFollow.setIdleMode(mode);
+    leftFollow.setIdleMode(mode);
+    rightFollow.setIdleMode(mode);
   }
 }
