@@ -3,10 +3,12 @@ package frc.robot.commands.drivetrain;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
-public class TurnDegrees extends PIDCommand { 
+public class TurnDegrees extends ProfiledPIDCommand { 
   private Drivetrain drivetrain;
   private double rotation;
 
@@ -17,15 +19,15 @@ public class TurnDegrees extends PIDCommand {
    */
   public TurnDegrees(Drivetrain drivetrain, double rotation) {
     super(
-      new PIDController(DrivetrainConfig.turnP, DrivetrainConfig.turnI, DrivetrainConfig.turnD), 
+      RobotContainer.turnDegreesController, 
         drivetrain::getHeadingDegrees,
-        rotation % 360, 
-        (output) -> { drivetrain.arcadeDrive(0, output); },
+        rotation, 
+        (output,setpoint) -> { drivetrain.arcadeDrive(0, output); },
         drivetrain
     );
     getController().setTolerance(3, 1);
     getController().enableContinuousInput(0, 360);
-
+    drivetrain.resetOdometry();
     //Shuffleboard.getTab("Drivetrain").add("Drive Distance PID", getController());
 
     addRequirements(drivetrain);
@@ -35,7 +37,9 @@ public class TurnDegrees extends PIDCommand {
 
   @Override
   public void initialize() {
-    getController().setSetpoint((rotation + drivetrain.getHeadingDegrees()) % 360);
+    // getController().setSetpoint((rotation + drivetrain.getHeadingDegrees()) % 360);
+    // System.out.println((rotation + drivetrain.getHeadingDegrees()) % 360);
+    //drivetrain.resetOdometry();
   }
 
   @Override

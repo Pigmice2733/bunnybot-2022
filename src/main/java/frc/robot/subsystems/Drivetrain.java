@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -99,6 +100,8 @@ public class Drivetrain extends SubsystemBase {
       xPosEntry.setDouble(pose.getX());
       yPosEntry.setDouble(pose.getY());
       headingEntry.setDouble(getHeadingDegrees());
+
+      SmartDashboard.putNumber("Turn Angle", getHeading().getDegrees());
     }
   }
 
@@ -109,7 +112,7 @@ public class Drivetrain extends SubsystemBase {
 
   /** Returns the robot's rotation since last reset in degrees, between 0 and 360. */
   public double getHeadingDegrees() {
-    return (gyro.getAngle() % 360);
+    return ((gyro.getYaw()+180)%360);
   }
 
   /** Returns a DifferentialDriveWheelSpeeds object from the encoder velocities. */
@@ -122,7 +125,9 @@ public class Drivetrain extends SubsystemBase {
 
  /** Returns the average distance moved by left and right wheels since last reset. */
   public double getAverageDistance() {
-    return (leftDrive.getEncoder().getPosition() + rightDrive.getEncoder().getPosition()) / 2;
+    double distance = (leftDrive.getEncoder().getPosition() + rightDrive.getEncoder().getPosition()) / 2;
+    
+    return (Math.abs(distance) < 0.1) ? 0.1 : distance;
   }
 
   /** Returns the feedforward object used by the drivetrain. */

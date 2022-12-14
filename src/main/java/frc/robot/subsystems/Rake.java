@@ -57,6 +57,9 @@ public class Rake extends SubsystemBase {
     leftMotor.restoreFactoryDefaults();
     rightMotor.restoreFactoryDefaults();  
 
+    rightMotor.setInverted(true);
+    leftMotor.setInverted(false);
+
     // sets encoders to report in degrees
     leftMotor.getEncoder().setPositionConversionFactor(RakeConfig.encoderConversion);
     rightMotor.getEncoder().setPositionConversionFactor(RakeConfig.encoderConversion);

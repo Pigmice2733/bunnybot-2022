@@ -4,15 +4,18 @@
 
 package frc.robot.commands.drivetrain;
 
+
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
-public class DriveDistance extends PIDCommand {
+public class DriveDistance extends ProfiledPIDCommand {
   private Drivetrain drivetrain;
-  private double distance;
 
   /**
    * Use PIDControllers to drive the specified distance.
@@ -21,12 +24,13 @@ public class DriveDistance extends PIDCommand {
    */
   public DriveDistance(Drivetrain drivetrain, double distance) {
     super(
-      new PIDController(DrivetrainConfig.driveDistP, DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD), 
+      new ProfiledPIDController(DrivetrainConfig.driveDistP, DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD, new Constraints(1, 1.5)), 
         drivetrain::getAverageDistance,
         distance, 
-        (output) -> { drivetrain.arcadeDrive(output, 0); },
+        (output,setpoint) -> { drivetrain.arcadeDrive(output, 0); },
         drivetrain
     );
+
     //Shuffleboard.getTab("Drivetrain").add("Drive Distance PID", getController());
 
     getController().setTolerance(0.05, 0.1);
@@ -34,12 +38,11 @@ public class DriveDistance extends PIDCommand {
     addRequirements(drivetrain);
 
     this.drivetrain = drivetrain;
-    this.distance = distance;
   }
 
   @Override
   public void initialize() {
-    getController().setSetpoint((distance + drivetrain.getAverageDistance()));
+    //getController().setSetpoint((distance + drivetrain.getAverageDistance()));
   }
 
   @Override
