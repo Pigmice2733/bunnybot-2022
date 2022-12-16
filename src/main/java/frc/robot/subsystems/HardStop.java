@@ -18,28 +18,27 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class HardStop extends SubsystemBase {
 
-  private final DoubleSolenoid frontSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortFrontLeft, HardStopConfig.solenoidPortFrontRight);
-  private final DoubleSolenoid backSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortBackLeft, HardStopConfig.solenoidPortBackRight);
-  private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+  //private final DoubleSolenoid frontSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortFrontLeft, HardStopConfig.solenoidPortFrontRight);
+  //private final DoubleSolenoid backSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, HardStopConfig.solenoidPortBackLeft, HardStopConfig.solenoidPortBackRight);
+  private final Compressor compressor;
 
-  private final NetworkTableEntry pressureEntry;
+  //private final NetworkTableEntry pressureEntry;
 
   public HardStop() { 
-    pressureEntry = Shuffleboard.getTab("Pneumatics").add("Pressure", -1.0).getEntry();
+    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
   }
 
   public void periodic() {
-    if (ShuffleboardConfig.pneumaticsPrintsEnabled)
-      pressureEntry.setDouble(compressor.getPressure());
+   
   }
 
   public void engageStop(){
-    frontSolenoid.set(Value.kForward);
-    backSolenoid.set(Value.kForward);
+  //   frontSolenoid.set(Value.kForward);
+  //   backSolenoid.set(Value.kForward);
   }
 
   public void retractStop(){
-    frontSolenoid.set(Value.kReverse);
-    backSolenoid.set(Value.kReverse);
+  //   frontSolenoid.set(Value.kReverse);
+  //   backSolenoid.set(Value.kReverse);
   }
 }

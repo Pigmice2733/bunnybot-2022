@@ -10,6 +10,7 @@ import frc.robot.commands.auto_routines.DriveAndDispense;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.hard_stop.ExtendHardStop;
 import frc.robot.commands.hard_stop.RetractHardStop;
 import frc.robot.commands.rake.RotateBackwardsLimitSwitch;
 import frc.robot.commands.rake.RotateForwardLimitSwitch;
@@ -38,9 +39,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.RakeConfig;
-import frc.robot.commands.AutoRoutines.AutoDispense;
-import frc.robot.commands.AutoRoutines.DriveAndDispense;
-import frc.robot.commands.HardStopper.RetractHardStop;
+import frc.robot.commands.auto_routines.AutoDispense;
+import frc.robot.commands.auto_routines.DriveAndDispense;
+import frc.robot.commands.hard_stop.RetractHardStop;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
@@ -67,7 +68,7 @@ public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
   private final Rake rake;
-  // private final HardStop hardStop;
+  private final HardStop hardStop;
 
   private XboxController driver;
   private XboxController operator;
@@ -82,7 +83,7 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     rake = new Rake();
-    // hardStop = new HardStop();
+    hardStop = new HardStop();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -97,6 +98,7 @@ public class RobotContainer {
       //new DriveDistance(drivetrain, Units.inchesToMeters(258))
       new DriveDistance(drivetrain, 2),
       new TurnDegrees(drivetrain, 90)
+      //new RetractHardStop(hardStop)
     );
 
     autoChooser = new SendableChooser<Command>();
@@ -157,6 +159,9 @@ public class RobotContainer {
     //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
     //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
 
+    new JoystickButton(driver, Button.kA.value).whenPressed(new RetractHardStop(hardStop));
+    new JoystickButton(driver, Button.kX.value).whenPressed(new ExtendHardStop(hardStop));
+
     new JoystickButton(driver, Button.kX.value)
       .whenPressed(drivetrain::resetOdometry);
   }
@@ -171,5 +176,6 @@ public class RobotContainer {
     // autoChooser.getSelected());
     return autoChooser.getSelected();
     // return new DriveDistance(drivetrain, 3);
+    // return new RetractHardStop(hardStop);
   }
 }

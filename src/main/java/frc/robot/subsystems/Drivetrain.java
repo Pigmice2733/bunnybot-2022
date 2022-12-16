@@ -100,9 +100,6 @@ public class Drivetrain extends SubsystemBase {
       xPosEntry.setDouble(pose.getX());
       yPosEntry.setDouble(pose.getY());
       headingEntry.setDouble(getHeadingDegrees());
-
-      // SmartDashboard.putNumber("Turn Angle", getHeadingDegrees());
-      System.out.println(getHeadingDegrees());
     }
   }
 
