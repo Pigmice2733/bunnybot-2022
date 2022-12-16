@@ -19,7 +19,7 @@ public final class Constants {
     // Multiplied by drive speed when in slow mode
     public static final double slowMultiplier = 0.25;
 
-    public static final double gearRatio = 1 / 8.3; // Times motor has to rotate for wheel to rotate once
+    public static final double gearRatio = 1 / 8.2; // Times motor has to rotate for wheel to rotate once
     public static final double wheelDiameterMeters = Units.inchesToMeters(4);
     public static final double rotationToDistanceConversion = (Math.PI * wheelDiameterMeters) * gearRatio; // Encoder rotations to distance moved
     public static final double drivetrainWidthMeters = Units.inchesToMeters(28); // Distance between left and right wheels in meters
@@ -36,7 +36,7 @@ public final class Constants {
     public static final double driveDistD = 0;
 
     // Auto turn PID
-    public static final double turnP = 0.004;
+    public static final double turnP = 0.001;
     public static final double turnI = 0;
     //public static final double turnD = 0.0001;
     public static final double turnD = 0; // 0 D for initial test
@@ -63,7 +63,7 @@ public final class Constants {
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
     public static final double motorSpeed = 0.2;
-    public static final double limitSwitchSpeed = 0.2;
+    public static final double autoRotateSpeed = 0.2;
 
     public static final int topRightLimitSwitchID = 1;
     public static final int topLeftLimitSwitchID = 2;

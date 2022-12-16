@@ -101,7 +101,8 @@ public class Drivetrain extends SubsystemBase {
       yPosEntry.setDouble(pose.getY());
       headingEntry.setDouble(getHeadingDegrees());
 
-      SmartDashboard.putNumber("Turn Angle", getHeading().getDegrees());
+      // SmartDashboard.putNumber("Turn Angle", getHeadingDegrees());
+      System.out.println(getHeadingDegrees());
     }
   }
 
@@ -112,7 +113,7 @@ public class Drivetrain extends SubsystemBase {
 
   /** Returns the robot's rotation since last reset in degrees, between 0 and 360. */
   public double getHeadingDegrees() {
-    return ((gyro.getYaw()+180)%360);
+    return (pose.getRotation().getDegrees() + 180) % 360;
   }
 
   /** Returns a DifferentialDriveWheelSpeeds object from the encoder velocities. */
@@ -145,7 +146,7 @@ public class Drivetrain extends SubsystemBase {
     return pose;
   }
 
-  /** Zeros odometry, gyro, and drive encoders. */
+  /** Zeros odometry, gyro, and drive encoders. Heading gets reset to 180 degrees. */
   public void resetOdometry() {
     gyro.reset();
     odometry.resetPosition(new Pose2d(), new Rotation2d());

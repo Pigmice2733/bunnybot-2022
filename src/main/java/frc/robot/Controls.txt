@@ -13,9 +13,11 @@ OPERATOR:
 (speed of movement equal to right minus left)
 right trigger: move rake up (positive)
 left trigger: move rake down (negative)
-X button: rotate rake to dispensing angle
-Y button: rotate rake to starting angle
+
+Y button: rotate rake to dispensing angle
 A button: rotate rake to ground-level angle
-B button: rotate rake to just above ground level
+X button: hold at raise angle
+B button: go to raise angle on press
+
 back button: hold to run auto-dispense routine, release to cancel
 start button: emergency release hardstop

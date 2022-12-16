@@ -8,7 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
-public class TurnDegrees extends ProfiledPIDCommand { 
+public class TurnDegrees extends PIDCommand { 
   private Drivetrain drivetrain;
   private double rotation;
 
@@ -19,14 +19,14 @@ public class TurnDegrees extends ProfiledPIDCommand {
    */
   public TurnDegrees(Drivetrain drivetrain, double rotation) {
     super(
-      RobotContainer.turnDegreesController, 
+        RobotContainer.turnDegreesController, 
         drivetrain::getHeadingDegrees,
         rotation, 
-        (output,setpoint) -> { drivetrain.arcadeDrive(0, output); },
+        (output) -> { drivetrain.arcadeDrive(0, output); },
         drivetrain
     );
-    getController().setTolerance(3, 1);
-    getController().enableContinuousInput(0, 360);
+    getController().setTolerance(3.0, 1.0);
+    getController().enableContinuousInput(0.0, 360.0);
     drivetrain.resetOdometry();
     //Shuffleboard.getTab("Drivetrain").add("Drive Distance PID", getController());
 

@@ -32,7 +32,7 @@ public class DriveDistance extends ProfiledPIDCommand {
     );
 
     //Shuffleboard.getTab("Drivetrain").add("Drive Distance PID", getController());
-
+    drivetrain.resetOdometry();
     getController().setTolerance(0.05, 0.1);
 
     addRequirements(drivetrain);

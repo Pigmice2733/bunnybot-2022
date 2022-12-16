@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Controls;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.Constants.ShuffleboardConfig;
@@ -71,6 +73,9 @@ public class Rake extends SubsystemBase {
     leftMotor.getEncoder().setPosition(RakeConfig.startAngle);
     rightMotor.getEncoder().setPosition(RakeConfig.startAngle);
 
+    leftMotor.setIdleMode(IdleMode.kBrake);
+    rightMotor.setIdleMode(IdleMode.kBrake);
+
     rakeTab = Shuffleboard.getTab("Rake");
     targetAngleEntry = rakeTab.add("Target Angle", RakeConfig.startAngle).getEntry();
     leftAngleEntry = rakeTab.add("Left Angle", RakeConfig.startAngle).getEntry();
@@ -112,13 +117,16 @@ public class Rake extends SubsystemBase {
 
     if(Controls.instance != null)
     {
-      if (Controls.instance.getRakeRotationSpeed() > 0.1)
+      if (Controls.instance.getRakeRotationSpeed() > Constants.axisThreshold)
         setMode(RakeMode.Manual);
     }
   }
 
   /** Determine the new values of the motor outputs based on the PIDControllers. */
   private void evaluateControllers() {
+    if (Controls.instance.getRakeRotationSpeed() < Constants.axisThreshold)
+      return;
+
     double leftPos = leftMotor.getEncoder().getPosition();
     double rightPos = rightMotor.getEncoder().getPosition();
 
