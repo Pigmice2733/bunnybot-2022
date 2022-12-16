@@ -159,8 +159,8 @@ public class RobotContainer {
     //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
     //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
 
-    new JoystickButton(driver, Button.kA.value).whenPressed(new RetractHardStop(hardStop));
-    new JoystickButton(driver, Button.kX.value).whenPressed(new ExtendHardStop(hardStop));
+    new JoystickButton(operator, Button.kLeftBumper.value).whenPressed(new RetractHardStop(hardStop));
+    new JoystickButton(operator, Button.kRightBumper.value).whenPressed(new ExtendHardStop(hardStop));
 
     new JoystickButton(driver, Button.kX.value)
       .whenPressed(drivetrain::resetOdometry);

@@ -62,8 +62,8 @@ public final class Constants {
     public static final double encoderConversion = gearRatio * 360; // Convert from rotations to degrees
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
-    public static final double motorSpeed = 0.2;
-    public static final double autoRotateSpeed = 0.2;
+    public static final double motorSpeed = 0.15;
+    public static final double autoRotateSpeed = 0.15;
 
     public static final int topRightLimitSwitchID = 1;
     public static final int topLeftLimitSwitchID = 2;
