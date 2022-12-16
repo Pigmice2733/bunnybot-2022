@@ -4,6 +4,20 @@
 
 package frc.robot;
 
+import frc.robot.Constants.RakeConfig;
+import frc.robot.commands.auto_routines.AutoDispense;
+import frc.robot.commands.auto_routines.DriveAndDispense;
+import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DriveDistance;
+import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.hard_stop.RetractHardStop;
+import frc.robot.commands.rake.RotateBackwardsLimitSwitch;
+import frc.robot.commands.rake.RotateForwardLimitSwitch;
+import frc.robot.commands.rake.RotateRakeManual;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.HardStop;
+import frc.robot.subsystems.Rake;
+
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -15,7 +29,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;  
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -23,19 +37,6 @@ import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DrivetrainConfig;
-import frc.robot.Constants.RakeConfig;
-import frc.robot.commands.AutoRoutines.AutoDispense;
-import frc.robot.commands.AutoRoutines.DriveAndDispense;
-import frc.robot.commands.HardStopper.RetractHardStop;
-import frc.robot.commands.drivetrain.ArcadeDrive;
-import frc.robot.commands.drivetrain.DriveDistance;
-import frc.robot.commands.drivetrain.TurnDegrees;
-import frc.robot.commands.rake.RotateBackwardsLimitSwitch;
-import frc.robot.commands.rake.RotateForwardLimitSwitch;
-import frc.robot.commands.rake.RotateRakeManual;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.HardStop;
-import frc.robot.subsystems.Rake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -45,55 +46,57 @@ import frc.robot.subsystems.Rake;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  public static ProfiledPIDController driveDistController = new ProfiledPIDController(DrivetrainConfig.driveDistP, DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD, new Constraints(1, 1));
-  public static ProfiledPIDController turnDegreesController = new ProfiledPIDController(DrivetrainConfig.turnP, DrivetrainConfig.turnI, DrivetrainConfig.turnD, new Constraints(15, 2));
-  
+  public static ProfiledPIDController driveDistController = new ProfiledPIDController(DrivetrainConfig.driveDistP,
+      DrivetrainConfig.driveDistI, DrivetrainConfig.driveDistD, new Constraints(1, 1));
+  public static ProfiledPIDController turnDegreesController = new ProfiledPIDController(DrivetrainConfig.turnP,
+      DrivetrainConfig.turnI, DrivetrainConfig.turnD, new Constraints(15, 2));
+
   private final Controls controls;
-  //private final Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
   private final Rake rake;
-  //private final HardStop hardStop;
+  // private final HardStop hardStop;
 
   private XboxController driver;
   private XboxController operator;
 
-  private AutoDispense autoDispense;
+  // private AutoDispense autoDispense;
 
   private SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-    //Shuffleboard.getTab("Drivetrain").add("Drive Distance", driveDistController);
-    //Shuffleboard.getTab("Drivetrain").add("Turn Degrees", turnDegreesController);
+    // Shuffleboard.getTab("Drivetrain").add("Drive Distance", driveDistController);
+    // Shuffleboard.getTab("Drivetrain").add("Turn Degrees", turnDegreesController);
 
-    //drivetrain = new Drivetrain();
+    drivetrain = new Drivetrain();
     rake = new Rake();
-    //hardStop = new HardStop();
+    // hardStop = new HardStop();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
 
     controls = new Controls(driver, operator);
 
-    //drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
+    drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::getDriveSpeed, controls::getTurnSpeed));
     rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
 
     List<Command> autoCommands = List.of(
-      //new DriveAndDispense(drivetrain, rake, hardStop),
-      //new DriveDistance(drivetrain, Units.inchesToMeters(258))
-      //new DriveDistance(drivetrain, 2),
-      //new TurnDegrees(drivetrain, 90)
+    // new DriveAndDispense(drivetrain, rake, hardStop),
+    // new DriveDistance(drivetrain, Units.inchesToMeters(258))
+    // new DriveDistance(drivetrain, 2),
+    // new TurnDegrees(drivetrain, 90)
     );
 
     autoChooser = new SendableChooser<Command>();
-    //Shuffleboard.getTab("Drivetrain").add("Auto Chooser", autoChooser);
+    // Shuffleboard.getTab("Drivetrain").add("Auto Chooser", autoChooser);
 
     autoCommands.forEach(command -> {
       System.out.println(command.getName());
-			autoChooser.addOption(command.getName(), command);
-		});
+      autoChooser.addOption(command.getName(), command);
+    });
 
     autoChooser.addOption("None", new WaitCommand(1));
-    
-    //autoDispense = new AutoDispense(drivetrain, rake);
+
+    // autoDispense = new AutoDispense(drivetrain, rake);
 
     configureButtonBindings(driver, operator);
   }
@@ -106,39 +109,46 @@ public class RobotContainer {
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
     // Rake preset angles (automatically switches to auto or limit switch mode)
-    // new JoystickButton(operator, Button.kA.value)
-    //     .whenPressed(new RotateBackwardsLimitSwitch(rake));
-    // new JoystickButton(operator, Button.kB.value)
-    //     .whenPressed(new RotateForwardLimitSwitch(rake));
-    // new JoystickButton(operator, Button.kY.value)
-    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
-    // new JoystickButton(operator, Button.kB.value)
-    //     .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
+    new JoystickButton(operator, Button.kA.value)
+        .whenPressed(new RotateBackwardsLimitSwitch(rake));
+    new JoystickButton(operator, Button.kB.value)
+        .whenPressed(new RotateForwardLimitSwitch(rake));
+    new JoystickButton(operator, Button.kY.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.startAngle));
+    new JoystickButton(operator, Button.kB.value)
+        .whenPressed(() -> rake.setSetpoint(RakeConfig.raiseAngle));
 
     // Emergency release hardStop pistons
-    // new JoystickButton(operator, Button.kStart.value)
-    //     .whenPressed(new RetractHardStop(hardStop));
+    /*
+     * new JoystickButton(operator, Button.kStart.value)
+     * .whenPressed(new RetractHardStop(hardStop));
+     */
 
-    // // Auto turn 180 degrees
-    // new JoystickButton(driver, Button.kRightBumper.value)
-    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 180).withTimeout(20)));
-    
-    // new JoystickButton(driver, Button.kLeftBumper.value)
-    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, -180).withTimeout(20))); 
+    // Auto turn 180 degrees
+    /*
+     * new JoystickButton(driver, Button.kRightBumper.value)
+     * .whenPressed(() -> CommandScheduler.getInstance().schedule(new
+     * TurnDegrees(drivetrain, 180).withTimeout(20)));
+     * 
+     * new JoystickButton(driver, Button.kLeftBumper.value)
+     * .whenPressed(() -> CommandScheduler.getInstance().schedule(new
+     * TurnDegrees(drivetrain, -180).withTimeout(20)));
+     */
 
+    // Slow mode (1/4 speed)
+    new JoystickButton(driver, Button.kY.value)
+        .whenPressed(() -> drivetrain.enableSlow())
+        .whenReleased(() -> drivetrain.disableSlow());
 
-    // // Slow mode (1/4 speed)
-    // new JoystickButton(driver, Button.kY.value)
-    //   .whenPressed(() -> drivetrain.enableSlow())
-    //   .whenReleased(() -> drivetrain.disableSlow());
-
-    // // Auto dispense (hold, release to cancel)
-    // new JoystickButton(operator, Button.kBack.value)
-    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
-    //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
+    // Auto dispense (hold, release to cancel)
+    /*
+     * new JoystickButton(operator, Button.kBack.value)
+     * .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
+     * .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
+     */
 
     // new JoystickButton(driver, Button.kX.value)
-    //   .whenPressed(drivetrain::resetOdometry);
+    // .whenPressed(drivetrain::resetOdometry);
   }
 
   /**
@@ -147,8 +157,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return new SequentialCommandGroup(new RetractHardStop(hardStop), autoChooser.getSelected());
+    // return new SequentialCommandGroup(new RetractHardStop(hardStop),
+    // autoChooser.getSelected());
     return autoChooser.getSelected();
-    //return new DriveDistance(drivetrain, 3);
+    // return new DriveDistance(drivetrain, 3);
   }
 }
