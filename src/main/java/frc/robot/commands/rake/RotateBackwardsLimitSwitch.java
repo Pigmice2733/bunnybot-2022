@@ -26,7 +26,7 @@ private final Rake rake;
   @Override
   public void initialize() {
     rake.setMode(RakeMode.limitSwitch);
-    rake.setOutputs(-RakeConfig.limitSwitchSpeed, -RakeConfig.limitSwitchSpeed);
+    rake.setOutputs(-RakeConfig.autoRotateSpeed, -RakeConfig.autoRotateSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

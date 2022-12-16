@@ -4,6 +4,20 @@
 
 package frc.robot;
 
+import frc.robot.Constants.RakeConfig;
+import frc.robot.commands.auto_routines.AutoDispense;
+import frc.robot.commands.auto_routines.DriveAndDispense;
+import frc.robot.commands.drivetrain.ArcadeDrive;
+import frc.robot.commands.drivetrain.DriveDistance;
+import frc.robot.commands.drivetrain.TurnDegrees;
+import frc.robot.commands.hard_stop.RetractHardStop;
+import frc.robot.commands.rake.RotateBackwardsLimitSwitch;
+import frc.robot.commands.rake.RotateForwardLimitSwitch;
+import frc.robot.commands.rake.RotateRakeManual;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.HardStop;
+import frc.robot.subsystems.Rake;
+
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -15,7 +29,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;  
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -53,12 +67,12 @@ public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
   private final Rake rake;
-  //private final HardStop hardStop;
+  // private final HardStop hardStop;
 
   private XboxController driver;
   private XboxController operator;
 
-  private AutoDispense autoDispense;
+  // private AutoDispense autoDispense;
 
   private SendableChooser<Command> autoChooser;
 
@@ -68,7 +82,7 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     rake = new Rake();
-    //hardStop = new HardStop();
+    // hardStop = new HardStop();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -90,12 +104,12 @@ public class RobotContainer {
 
     autoCommands.forEach(command -> {
       System.out.println(command.getName());
-			autoChooser.addOption(command.getName(), command);
-		});
+      autoChooser.addOption(command.getName(), command);
+    });
 
     autoChooser.addOption("None", new WaitCommand(1));
-    
-    //autoDispense = new AutoDispense(drivetrain, rake);
+
+    // autoDispense = new AutoDispense(drivetrain, rake);
 
     configureButtonBindings(driver, operator);
   }
@@ -153,8 +167,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return new SequentialCommandGroup(new RetractHardStop(hardStop), autoChooser.getSelected());
+    // return new SequentialCommandGroup(new RetractHardStop(hardStop),
+    // autoChooser.getSelected());
     return autoChooser.getSelected();
-    //return new DriveDistance(drivetrain, 3);
+    // return new DriveDistance(drivetrain, 3);
   }
 }
