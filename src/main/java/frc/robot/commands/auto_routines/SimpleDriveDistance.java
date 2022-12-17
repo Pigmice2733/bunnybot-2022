@@ -36,6 +36,6 @@ public class SimpleDriveDistance extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return drivetrain.getAverageDistance() > Units.inchesToMeters(235);
+    return drivetrain.getAverageDistance() > Units.inchesToMeters(242);
   }
 }
