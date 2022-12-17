@@ -92,8 +92,8 @@ public class Rake extends SubsystemBase {
     
     modeEntry = rakeTab.add("Mode", mode.toString()).getEntry();
 
-    rakeTab.add("Left PID", leftController);
-    rakeTab.add("Right PID", rightController);
+    // rakeTab.add("Left PID", leftController);
+    // rakeTab.add("Right PID", rightController);
   }
 
   @Override
@@ -136,6 +136,7 @@ public class Rake extends SubsystemBase {
     leftMotor.set(leftOutput);
     rightMotor.set(rightOutput);
   }
+
 
   /** Determine the new values of the motor outputs based on the PIDControllers. */
   private void evaluateControllers() {double leftPos = leftMotor.getEncoder().getPosition();

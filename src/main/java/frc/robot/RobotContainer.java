@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
@@ -163,7 +164,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(new RotateBackwardsLimitSwitch(rake),new SimpleDriveDistance(drivetrain));
+    return new ParallelCommandGroup(new RotateBackwardsLimitSwitch(rake),new SimpleDriveDistance(drivetrain));
     //return autoChooser.getSelected();
   }
 }

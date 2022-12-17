@@ -82,9 +82,9 @@ public final class Constants {
   }
 
   public final static class ShuffleboardConfig {
-    public static final boolean drivetrainPrintsEnabled = true;
-    public static final boolean rakePrintsEnabled = true;
-    public static final boolean pneumaticsPrintsEnabled = true;
+    public static final boolean drivetrainPrintsEnabled = false;
+    public static final boolean rakePrintsEnabled = false;
+    public static final boolean pneumaticsPrintsEnabled = false;
   }
 
   public final static class HardStopConfig {
