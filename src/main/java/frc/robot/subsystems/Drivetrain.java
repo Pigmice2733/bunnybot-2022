@@ -47,6 +47,7 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d pose = new Pose2d();
 
   private boolean slowEnabled = false;
+  private boolean backwards = false;
   public double outputFactor = 1;
 
   public Drivetrain() {
@@ -91,6 +92,11 @@ public class Drivetrain extends SubsystemBase {
   public void enableSlow() { setSlow(true); }
   public void disableSlow() { setSlow(false); }
   public void toggleSlow() { setSlow(!this.slowEnabled); }
+  
+  public void setBackwards(boolean backwards) {this.backwards = backwards;}   
+  public void enableBackwards() { setBackwards(true); }
+  public void disableBackwards() { setBackwards(false); }
+  public void toggleBackwards() { setBackwards(!this.backwards); }
 
   /** Updates the odometry pose with the heading and position measurements. */
   private void updateOdometry() {
@@ -102,6 +108,8 @@ public class Drivetrain extends SubsystemBase {
       headingEntry.setDouble(getHeadingDegrees());
     }
   }
+
+
 
   /** Returns the robot's current rotation in radians. */
   public Rotation2d getHeading() {
@@ -193,6 +201,12 @@ public class Drivetrain extends SubsystemBase {
   public void updateOutputs(double left, double right) {
     // Clamp outputs FOR TESTING (to make sure drivetrain does not go crazy while testing auto commands)
     // WILL BE REMOVED FOR COMP
+
+    if(backwards){
+      left *= -1;
+      right *= -1;
+    }
+
     double clampValue = 1;
     left = Math.max(Math.min(clampValue, left), -clampValue);
     right = Math.max(Math.min(clampValue, right), -clampValue);

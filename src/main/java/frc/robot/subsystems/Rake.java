@@ -33,7 +33,7 @@ public class Rake extends SubsystemBase {
   private double leftOutput;
   private double rightOutput;
   private final ShuffleboardTab rakeTab;
-  private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry, topLeftSwitchEntry, topRightSwitchEntry, bottomLeftSwitchEntry, bottomRightSwitchEntry;
+  private final NetworkTableEntry targetAngleEntry, leftAngleEntry, rightAngleEntry, leftOutputEntry, rightOutputEntry, modeEntry, topLeftSwitchEntry, topRightSwitchEntry, bottomLeftSwitchEntry, bottomRightSwitchEntry, speedEntry;
    
   private final DigitalInput topRightLimitSwitch;
   private final DigitalInput topLeftLimitSwitch;
@@ -87,6 +87,8 @@ public class Rake extends SubsystemBase {
     topRightSwitchEntry = rakeTab.add("Top Right Switch", false).getEntry();
     bottomLeftSwitchEntry = rakeTab.add("Bottom Left Switch", false).getEntry();
     bottomRightSwitchEntry = rakeTab.add("Bottom Right Switch", false).getEntry();
+
+    speedEntry = rakeTab.add("Rake Speed", 0).getEntry();
     
     modeEntry = rakeTab.add("Mode", mode.toString()).getEntry();
 
@@ -101,33 +103,37 @@ public class Rake extends SubsystemBase {
    * Update the Shuffleboard display.
    */
   public void periodic() {
-    if (mode == RakeMode.Automatic)
-      evaluateControllers();
-
-    if(getTopLeftSwitch()) leftOutput = Math.min(0,leftOutput);
-    if(getTopRightSwitch()) rightOutput = Math.min(0,rightOutput);
-    if(getBottomLeftSwitch()) leftOutput = Math.max(0,leftOutput);
-    if(getBottomRightSwitch()) rightOutput = Math.max(0,rightOutput);
-  
-    leftMotor.set(leftOutput);
-    rightMotor.set(rightOutput);
+    // Switch to Manual if triggers are pressed
+    if(Controls.instance != null)
+      if (Controls.instance.getRakeRotationSpeed() > Constants.axisThreshold)
+        setMode(RakeMode.Manual);
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
+  }
 
-    if(Controls.instance != null)
-    {
-      if (Controls.instance.getRakeRotationSpeed() > Constants.axisThreshold)
-        setMode(RakeMode.Manual);
+  public void clampAndApplyOutputs() {
+    // Clamp outputs if limit switches are pressed
+    if(getTopLeftSwitch() || getTopRightSwitch())
+    { 
+      leftOutput = Math.min(0,leftOutput);
+      rightOutput = Math.min(0,rightOutput);
     }
+    if(getBottomLeftSwitch() || getBottomRightSwitch()) 
+    {
+      leftOutput = Math.max(0,leftOutput);
+      rightOutput = Math.max(0,rightOutput);
+    }
+
+    leftOutput *= speedEntry.getDouble(1);
+    rightOutput *= speedEntry.getDouble(1);
+  
+    leftMotor.set(leftOutput);
+    rightMotor.set(rightOutput);
   }
 
   /** Determine the new values of the motor outputs based on the PIDControllers. */
-  private void evaluateControllers() {
-    if (Controls.instance.getRakeRotationSpeed() < Constants.axisThreshold)
-      return;
-
-    double leftPos = leftMotor.getEncoder().getPosition();
+  private void evaluateControllers() {double leftPos = leftMotor.getEncoder().getPosition();
     double rightPos = rightMotor.getEncoder().getPosition();
 
     setOutputs(leftController.calculate(leftPos), rightController.calculate(rightPos));
@@ -148,7 +154,7 @@ public class Rake extends SubsystemBase {
   }
 
   /**
-   * Enable Manual mode if the triggers are pressed, then update the motor outputs to the input values.
+   * Update the motor outputs to the input values.
    * @param left the new output for the left motor
    * @param right the new output for the right motor
    */
@@ -158,8 +164,8 @@ public class Rake extends SubsystemBase {
   }
 
    /**
-   * Enable Manual mode if the triggers are pressed, then update the motor outputs to the input value.
-   * @param speed the new output for the motors
+   * Update the motor outputs to the input value.
+   * @param speed the new output for both motors
    */
   public void manualDrive(double speed) {
     manualDrive(speed, speed);

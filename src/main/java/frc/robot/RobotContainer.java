@@ -26,6 +26,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -68,7 +69,7 @@ public class RobotContainer {
   private final Controls controls;
   private final Drivetrain drivetrain;
   private final Rake rake;
-  private final HardStop hardStop;
+  //private final HardStop hardStop;
 
   private XboxController driver;
   private XboxController operator;
@@ -83,7 +84,7 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     rake = new Rake();
-    hardStop = new HardStop();
+    //hardStop = new HardStop();
 
     driver = new XboxController(0);
     operator = new XboxController(1);
@@ -123,11 +124,11 @@ public class RobotContainer {
    * passing it to a {@link JoystickButton}.
    */
   private void configureButtonBindings(XboxController driver, XboxController operator) {
-    // Rotate rake (automatically switches to auto or limit switch mode)
+    // Rotate rake auto using limit switches
     new JoystickButton(operator, Button.kA.value)
-        .whenPressed(new RotateBackwardsLimitSwitch(rake));
+        .whenPressed(() -> new RotateBackwardsLimitSwitch(rake));
     new JoystickButton(operator, Button.kY.value)
-        .whenPressed(new RotateForwardLimitSwitch(rake));
+        .whenPressed(() -> new RotateForwardLimitSwitch(rake));
     
     new JoystickButton(operator, Button.kB.value)
       .whenPressed(new RaiseRakeSlightly(rake));
@@ -136,34 +137,27 @@ public class RobotContainer {
       .whenPressed(new RaiseRakeSlightly(rake))
       .whenReleased(new RotateBackwardsLimitSwitch(rake));
 
-    // Emergency release hardStop pistons
-    // new JoystickButton(operator, Button.kStart.value)
-    //     .whenPressed(new RetractHardStop(hardStop));
-
-    // // Auto turn 90 degrees right
-    // new JoystickButton(driver, Button.kRightBumper.value)
-    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 270).withTimeout(8)));
+    // Drive backwards
+    new JoystickButton(driver, Button.kRightBumper.value)
+      .whenPressed(() -> drivetrain.enableBackwards())
+      .whenReleased(() -> drivetrain.disableBackwards());
     
-    // // Auto turn 90 degrees right
-    // new JoystickButton(driver, Button.kLeftBumper.value)
-    //   .whenPressed(() -> CommandScheduler.getInstance().schedule(new TurnDegrees(drivetrain, 90).withTimeout(8))); 
-
-
-    // // Slow mode (1/4 speed)
-    // new JoystickButton(driver, Button.kY.value)
-    //   .whenPressed(() -> drivetrain.enableSlow())
-    //   .whenReleased(() -> drivetrain.disableSlow());
+    // Slow mode (1/4 speed)
+    new JoystickButton(driver, Button.kY.value)
+      .whenPressed(() -> drivetrain.enableSlow())
+      .whenReleased(() -> drivetrain.disableSlow());
 
     // // Auto dispense (hold, release to cancel)
     // new JoystickButton(operator, Button.kBack.value)
     //   .whenPressed(() -> CommandScheduler.getInstance().schedule(autoDispense))
     //   .whenReleased(() -> CommandScheduler.getInstance().cancel(autoDispense));
 
-    new JoystickButton(operator, Button.kLeftBumper.value).whenPressed(new RetractHardStop(hardStop));
-    new JoystickButton(operator, Button.kRightBumper.value).whenPressed(new ExtendHardStop(hardStop));
+    // new JoystickButton(operator, Button.kLeftBumper.value).whenPressed(new RetractHardStop(hardStop));
+    // new JoystickButton(operator, Button.kRightBumper.value).whenPressed(new ExtendHardStop(hardStop));
 
-    new JoystickButton(driver, Button.kX.value)
-      .whenPressed(drivetrain::resetOdometry);
+    // Emergency release hardStop pistons
+    // new JoystickButton(operator, Button.kStart.value)
+    //     .whenPressed(new RetractHardStop(hardStop));
   }
 
   /**
@@ -172,10 +166,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return new SequentialCommandGroup(new RetractHardStop(hardStop),
-    // autoChooser.getSelected());
     return autoChooser.getSelected();
-    // return new DriveDistance(drivetrain, 3);
-    // return new RetractHardStop(hardStop);
   }
 }

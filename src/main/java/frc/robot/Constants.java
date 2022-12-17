@@ -62,13 +62,13 @@ public final class Constants {
     public static final double encoderConversion = gearRatio * 360; // Convert from rotations to degrees
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
-    public static final double motorSpeed = 0.15;
-    public static final double autoRotateSpeed = 0.15;
+    public static final double motorSpeed = 0.8;
+    public static final double autoRotateSpeed = 0.8;
 
-    public static final int topRightLimitSwitchID = 1;
-    public static final int topLeftLimitSwitchID = 2;
+    public static final int topRightLimitSwitchID = 2;
+    public static final int topLeftLimitSwitchID = 3;
     public static final int bottomRightLimitSwitchID = 0;
-    public static final int bottomLeftLimitSwitchID = 3;
+    public static final int bottomLeftLimitSwitchID = 1;
     
     // Preset rake angles (degrees)
     public static final double startAngle = 60;
