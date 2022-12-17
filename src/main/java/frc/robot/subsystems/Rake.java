@@ -110,6 +110,8 @@ public class Rake extends SubsystemBase {
 
     if (ShuffleboardConfig.rakePrintsEnabled) 
       updateShuffleboard();
+
+    clampAndApplyOutputs();
   }
 
   public void clampAndApplyOutputs() {
@@ -125,8 +127,11 @@ public class Rake extends SubsystemBase {
       rightOutput = Math.max(0,rightOutput);
     }
 
-    leftOutput *= speedEntry.getDouble(1);
-    rightOutput *= speedEntry.getDouble(1);
+    leftOutput *= speedEntry.getDouble(.1);
+    rightOutput *= speedEntry.getDouble(.1);
+
+    leftOutputEntry.setDouble(leftOutput);
+      rightOutputEntry.setDouble(rightOutput);
   
     leftMotor.set(leftOutput);
     rightMotor.set(rightOutput);
@@ -176,8 +181,7 @@ public class Rake extends SubsystemBase {
     rightOutput = right;
 
     if (ShuffleboardConfig.rakePrintsEnabled) {
-      leftOutputEntry.setDouble(left);
-      rightOutputEntry.setDouble(right);
+      
     }
   }
   

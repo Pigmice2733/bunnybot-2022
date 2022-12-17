@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.RakeConfig;
 import frc.robot.commands.auto_routines.AutoDispense;
 import frc.robot.commands.auto_routines.DriveAndDispense;
+import frc.robot.commands.auto_routines.SimpleDriveDistance;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.drivetrain.TurnDegrees;
@@ -95,11 +96,7 @@ public class RobotContainer {
     rake.setDefaultCommand(new RotateRakeManual(controls::getRakeRotationSpeed, rake));
 
     List<Command> autoCommands = List.of(
-      //new DriveAndDispense(drivetrain, rake, hardStop),
-      //new DriveDistance(drivetrain, Units.inchesToMeters(258))
-      new DriveDistance(drivetrain, 2),
-      new TurnDegrees(drivetrain, 90)
-      //new RetractHardStop(hardStop)
+      new SimpleDriveDistance(drivetrain)
     );
 
     autoChooser = new SendableChooser<Command>();
@@ -166,6 +163,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return new SequentialCommandGroup(new RotateBackwardsLimitSwitch(rake),new SimpleDriveDistance(drivetrain));
+    //return autoChooser.getSelected();
   }
 }

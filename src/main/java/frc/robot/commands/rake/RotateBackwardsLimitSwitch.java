@@ -19,9 +19,7 @@ public class RotateBackwardsLimitSwitch extends CommandBase {
    */
   public RotateBackwardsLimitSwitch(Rake rake) {
     this.rake = rake;
-
-    rake.setMode(RakeMode.limitSwitch);
-    rake.setOutputs(-RakeConfig.autoRotateSpeed, -RakeConfig.autoRotateSpeed);
+    
 
     SmartDashboard.putBoolean("Backwards command running", true);
     
@@ -31,11 +29,14 @@ public class RotateBackwardsLimitSwitch extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    rake.setMode(RakeMode.limitSwitch);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    rake.setOutputs(-RakeConfig.autoRotateSpeed, -RakeConfig.autoRotateSpeed);
   }
 
   // Called once the command ends or is interrupted.

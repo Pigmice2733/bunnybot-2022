@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto_routines;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drivetrain.DriveDistance;
 import frc.robot.commands.rake.RotateForwardLimitSwitch;
@@ -18,9 +19,9 @@ public class DriveAndDispense extends SequentialCommandGroup {
    * @param rake a rake subsystem
    * @param hardStop a hard-stop subsystem
    */
-  public DriveAndDispense(Drivetrain drivetrain, Rake rake, HardStop hardStop) {
+  public DriveAndDispense(Drivetrain drivetrain, Rake rake) {
     addCommands(
-      new DriveDistance(drivetrain, -5),
+      new DriveDistance(drivetrain, Units.inchesToMeters(-258)),
       new RotateForwardLimitSwitch(rake)
     );
   }

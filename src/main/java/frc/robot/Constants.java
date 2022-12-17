@@ -63,7 +63,7 @@ public final class Constants {
     public static final int leftMotorID = 6;
     public static final int rightMotorID = 5;
     public static final double motorSpeed = 0.8;
-    public static final double autoRotateSpeed = 0.8;
+    public static final double autoRotateSpeed = 0.3;
 
     public static final int topRightLimitSwitchID = 2;
     public static final int topLeftLimitSwitchID = 3;
